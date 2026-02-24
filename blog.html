@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SEO Blog & Resources – Vertexas</title>
+  <meta name="description" content="Free SEO guides, tips, and resources from Vertexas. Learn technical SEO, AEO, GEO, link building strategies, and stay updated on search engine algorithm changes.">
+
+  <!-- SEO: Canonical -->
+  <link rel="canonical" href="https://vertexasltd.github.io/Vertexas/blog.html">
+
+  <!-- SEO: Robots -->
+  <meta name="google-site-verification" content="googlee9fc8aabdb9525f5">
+  <meta name="robots" content="index, follow">
+
+  <!-- SEO: Keywords & Publisher -->
+  <meta name="keywords" content="SEO blog, SEO guides, SEO tips, AEO resources, GEO strategies, link building tips, technical SEO, SEO best practices">
+
+  <!-- SEO: Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SEO Blog & Resources – Vertexas">
+  <meta property="og:description" content="Free SEO guides, tips, and strategies. Learn technical SEO, AEO, GEO, and link building from industry experts.">
+  <meta property="og:url" content="https://vertexasltd.github.io/Vertexas/blog.html">
+  <meta property="og:image" content="https://vertexasltd.github.io/Vertexas/og-image.png">
+  <meta property="og:site_name" content="Vertexas">
+
+  <!-- SEO: Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SEO Blog & Resources – Vertexas">
+  <meta name="twitter:description" content="Free SEO guides, tips, and strategies from Vertexas experts.">
+  <meta name="twitter:image" content="https://vertexasltd.github.io/Vertexas/og-image.png">
+
+  <!-- SEO: Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Vertexas SEO Blog & Resources",
+    "description": "SEO guides, tips, and resources covering technical SEO, AEO, GEO, and link building strategies.",
+    "url": "https://vertexasltd.github.io/Vertexas/blog.html",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Vertexas",
+      "url": "https://vertexasltd.github.io/Vertexas/"
+    }
+  }
+  </script>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔺</text></svg>">
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #222; line-height: 1.6; }
+    
+    header { display: flex; align-items: center; justify-content: space-between; background: #003c8f; padding: 10px 40px; }
+    header span { color: white; font-size: 22px; font-weight: bold; letter-spacing: 1px; }
+    .menu-toggle { display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+    
+    nav { display: flex; justify-content: center; gap: 30px; background: #003c8f; padding: 10px 0; flex-wrap: wrap; }
+    nav a { color: white; text-decoration: none; font-weight: bold; padding: 5px 10px; transition: background 0.3s; }
+    nav a:hover { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+    nav a.active { background: rgba(255, 193, 7, 0.2); border-radius: 4px; }
+    
+    .page-banner { background: linear-gradient(to right, #003c8f, #0052b5); color: white; text-align: center; padding: 60px 20px; }
+    .page-banner h1 { font-size: 36px; font-weight: bold; margin-bottom: 10px; }
+    .page-banner p { font-size: 18px; opacity: 0.9; max-width: 700px; margin: 0 auto; }
+    
+    .main-content { max-width: 1100px; margin: 50px auto; padding: 0 20px 60px; }
+    
+    .intro { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 40px; text-align: center; }
+    .intro p { font-size: 17px; line-height: 1.8; color: #333; margin-bottom: 20px; }
+    .coming-soon { background: #e7f3ff; border-left: 4px solid #0052b5; padding: 20px; border-radius: 6px; margin-top: 20px; }
+    .coming-soon h3 { color: #003c8f; font-size: 20px; margin-bottom: 10px; }
+    .coming-soon p { font-size: 15px; color: #555; }
+    
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+    .resource-card { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 30px; transition: transform 0.3s, box-shadow 0.3s; }
+    .resource-card:hover { transform: translateY(-5px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+    .resource-card h3 { color: #003c8f; font-size: 22px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
+    .resource-card h3:before { 
+      content: ''; 
+      display: inline-block; 
+      width: 32px; 
+      height: 32px; 
+      background: #0052b5; 
+      border-radius: 6px; 
+      flex-shrink: 0;
+    }
+    .resource-card.tech h3:before { 
+      background: linear-gradient(135deg, #003c8f 0%, #0052b5 100%);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z'/%3E%3C/svg%3E") center/contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z'/%3E%3C/svg%3E");
+    }
+    .resource-card.aeo h3:before { 
+      background: linear-gradient(135deg, #003c8f 0%, #0052b5 100%);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'/%3E%3Cpolyline points='7.5 4.21 12 6.81 16.5 4.21'/%3E%3Cpolyline points='7.5 19.79 7.5 14.6 3 12'/%3E%3Cpolyline points='21 12 16.5 14.6 16.5 19.79'/%3E%3Cpolyline points='3.27 6.96 12 12.01 20.73 6.96'/%3E%3Cline x1='12' y1='22.08' x2='12' y2='12'/%3E%3C/svg%3E") center/contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'/%3E%3Cpolyline points='7.5 4.21 12 6.81 16.5 4.21'/%3E%3Cpolyline points='7.5 19.79 7.5 14.6 3 12'/%3E%3Cpolyline points='21 12 16.5 14.6 16.5 19.79'/%3E%3Cpolyline points='3.27 6.96 12 12.01 20.73 6.96'/%3E%3Cline x1='12' y1='22.08' x2='12' y2='12'/%3E%3C/svg%3E");
+    }
+    .resource-card.geo h3:before { 
+      background: linear-gradient(135deg, #003c8f 0%, #0052b5 100%);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpolyline points='16 18 22 12 16 6'/%3E%3Cpolyline points='8 6 2 12 8 18'/%3E%3C/svg%3E") center/contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpolyline points='16 18 22 12 16 6'/%3E%3Cpolyline points='8 6 2 12 8 18'/%3E%3C/svg%3E");
+    }
+    .resource-card.links h3:before { 
+      background: linear-gradient(135deg, #003c8f 0%, #0052b5 100%);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center/contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E");
+    }
+    .resource-card.analytics h3:before { 
+      background: linear-gradient(135deg, #003c8f 0%, #0052b5 100%);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cline x1='18' y1='20' x2='18' y2='10'/%3E%3Cline x1='12' y1='20' x2='12' y2='4'/%3E%3Cline x1='6' y1='20' x2='6' y2='14'/%3E%3C/svg%3E") center/contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cline x1='18' y1='20' x2='18' y2='10'/%3E%3Cline x1='12' y1='20' x2='12' y2='4'/%3E%3Cline x1='6' y1='20' x2='6' y2='14'/%3E%3C/svg%3E");
+    }
+    .resource-card.content h3:before { 
+      background: linear-gradient(135deg, #003c8f 0%, #0052b5 100%);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cpolyline points='10 9 9 9 8 9'/%3E%3C/svg%3E") center/contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cpolyline points='10 9 9 9 8 9'/%3E%3C/svg%3E");
+    }
+    .coming-soon h3:before { 
+      content: ''; 
+      display: inline-block; 
+      width: 28px; 
+      height: 28px; 
+      margin-right: 8px;
+      background: linear-gradient(135deg, #003c8f 0%, #0052b5 100%);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='12' y1='18' x2='12' y2='12'/%3E%3Cline x1='9' y1='15' x2='15' y2='15'/%3E%3C/svg%3E") center/contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='12' y1='18' x2='12' y2='12'/%3E%3Cline x1='9' y1='15' x2='15' y2='15'/%3E%3C/svg%3E");
+    }
+    .coming-soon h3 { display: flex; align-items: center; }
+    .resource-card p { color: #555; line-height: 1.8; margin-bottom: 20px; }
+    .resource-card ul { list-style: none; padding: 0; margin-bottom: 20px; }
+    .resource-card ul li { padding: 8px 0; color: #333; border-bottom: 1px solid #f0f0f0; }
+    .resource-card ul li:before { content: "→ "; color: #0052b5; font-weight: bold; margin-right: 8px; }
+    .resource-card ul li:last-child { border-bottom: none; }
+    
+    .cta-box { background: #0052b5; color: white; padding: 40px; border-radius: 8px; text-align: center; margin-top: 50px; }
+    .cta-box h2 { font-size: 28px; margin-bottom: 15px; }
+    .cta-box p { font-size: 17px; margin-bottom: 25px; opacity: 0.95; }
+    .btn-yellow { background: #ffc107; color: #003c8f; padding: 14px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: background 0.3s; display: inline-block; }
+    .btn-yellow:hover { background: #e6b800; }
+    
+    footer { background: #003c8f; color: #ddd; text-align: center; padding: 30px 20px; font-size: 14px; }
+    footer a { color: #ffc107; text-decoration: none; }
+    footer a:hover { color: #fff; }
+    footer nav { margin-top: 15px; }
+    footer nav a { margin: 0 12px; color: #ddd; font-weight: normal; }
+    
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+      nav { display: none; flex-direction: column; align-items: center; }
+      nav.active { display: flex; }
+      header { padding: 10px 20px; }
+      .page-banner h1 { font-size: 28px; }
+      .resources-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <header role="banner">
+    <span>VERTEXAS</span>
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+  </header>
+
+  <nav id="mainNav" role="navigation" aria-label="Main navigation">
+    <a href="index.html">Home</a>
+    <a href="aeo.html">AEO Packages</a>
+    <a href="geo.html">GEO Packages</a>
+    <a href="backlinks.html">Backlinks</a>
+    <a href="cost-plus.html">Cost Plus Pricing</a>
+    <a href="blog.html" class="active">Blog</a>
+  </nav>
+
+  <main role="main">
+    <div class="page-banner">
+      <h1>SEO Blog & Resources</h1>
+      <p>Free guides, strategies, and insights to help you rank higher and grow your business</p>
+    </div>
+
+    <div class="main-content">
+      <div class="intro">
+        <p>Welcome to the Vertexas SEO Resource Center. Whether you're new to SEO or a seasoned professional, our guides cover everything from technical SEO fundamentals to cutting-edge AEO and GEO strategies.</p>
+        
+        <div class="coming-soon">
+          <h3>Blog Articles Coming Soon</h3>
+          <p>We're currently building out our blog with in-depth SEO guides and case studies. Subscribe to our newsletter or check back soon for updates on technical SEO, link building strategies, and AI-powered search optimization.</p>
+        </div>
+      </div>
+
+      <div class="resources-grid">
+        <div class="resource-card tech">
+          <h3>Technical SEO</h3>
+          <p>Master the fundamentals of technical SEO to ensure your site is crawlable, indexable, and optimized for search engines.</p>
+          <ul>
+            <li>Site architecture and internal linking</li>
+            <li>Canonical tags and duplicate content</li>
+            <li>Robots.txt and XML sitemaps</li>
+            <li>Core Web Vitals optimization</li>
+            <li>Structured data and schema markup</li>
+          </ul>
+        </div>
+
+        <div class="resource-card aeo">
+          <h3>AEO Strategies</h3>
+          <p>Position your brand as the go-to answer in AI-powered search engines like ChatGPT, Perplexity, and Google AI Overviews.</p>
+          <ul>
+            <li>How AI answer engines work</li>
+            <li>Building E-E-A-T signals for AI</li>
+            <li>Content formatting for AI citation</li>
+            <li>Measuring AEO visibility</li>
+            <li>AEO vs traditional SEO</li>
+          </ul>
+        </div>
+
+        <div class="resource-card geo">
+          <h3>GEO Best Practices</h3>
+          <p>Optimize your content to appear inside AI-generated search results on Google SGE and other generative platforms.</p>
+          <ul>
+            <li>Understanding generative search</li>
+            <li>Content depth and semantic coverage</li>
+            <li>Knowledge graph optimization</li>
+            <li>Topic authority building</li>
+            <li>GEO content templates</li>
+          </ul>
+        </div>
+
+        <div class="resource-card links">
+          <h3>Link Building</h3>
+          <p>Build high-quality backlinks that drive authority, rankings, and referral traffic using white-hat techniques.</p>
+          <ul>
+            <li>Manual outreach strategies</li>
+            <li>Content-led link acquisition</li>
+            <li>Evaluating link quality (DR, relevance)</li>
+            <li>Avoiding toxic backlinks</li>
+            <li>Link reclamation and monitoring</li>
+          </ul>
+        </div>
+
+        <div class="resource-card analytics">
+          <h3>SEO Analytics</h3>
+          <p>Track, measure, and optimize your SEO performance with the right metrics and tools.</p>
+          <ul>
+            <li>Google Search Console mastery</li>
+            <li>Ranking tracking and SERP analysis</li>
+            <li>Organic traffic attribution</li>
+            <li>Conversion rate optimization</li>
+            <li>Competitor analysis techniques</li>
+          </ul>
+        </div>
+
+        <div class="resource-card content">
+          <h3>Content Strategy</h3>
+          <p>Create SEO-optimized content that ranks well in traditional search and AI answer engines.</p>
+          <ul>
+            <li>Keyword research fundamentals</li>
+            <li>Topic clustering and pillar pages</li>
+            <li>Writing for featured snippets</li>
+            <li>FAQ schema implementation</li>
+            <li>Content refresh strategies</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cta-box">
+        <h2>Need Help With Your SEO?</h2>
+        <p>Get a free SEO audit and discover how Vertexas can help you rank higher, drive more traffic, and grow your business.</p>
+        <a href="index.html#contact" class="btn-yellow">Get Your Free Audit</a>
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 Vertexas. All rights reserved.</p>
+    <nav role="navigation" aria-label="Footer navigation">
+      <a href="index.html">Home</a>
+      <a href="aeo.html">AEO Packages</a>
+      <a href="geo.html">GEO Packages</a>
+      <a href="backlinks.html">Backlinks</a>
+      <a href="cost-plus.html">Cost Plus Pricing</a>
+      <a href="blog.html">Blog</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="https://www.linkedin.com/company/105091805/admin/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </nav>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('mainNav').classList.toggle('active');
+    }
+  </script>
+</body>
+</html>
