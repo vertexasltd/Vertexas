@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VERTEXAS — Advanced AI Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#002D72;--blue:#0056D2;--bg:#ffffff;--surface:#F8F9FA;--border:#EEEEEE;--border2:#E2E6EA;--text:#1A1A1B;--body:#4A4A4A;--muted:#888;--success:#2ECC71;--warning:#F39C12;--error:#E74C3C;--purple:#7C3AED;--sidebar-w:240px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--surface);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+.shell{display:flex;min-height:100vh;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--primary);display:flex;flex-direction:column;z-index:50;overflow-y:auto;}
+.sidebar-logo{padding:1.5rem 1.75rem;border-bottom:1px solid rgba(255,255,255,0.1);}
+.logo-text{font-weight:800;font-size:1.2rem;color:#fff;letter-spacing:-0.01em;}
+.logo-text span{color:rgba(255,255,255,0.45);}
+.logo-sub{font-size:.62rem;color:rgba(255,255,255,0.4);margin-top:.2rem;text-transform:uppercase;letter-spacing:.08em;}
+.apex-badge{display:inline-block;background:rgba(124,58,237,0.3);border:1px solid rgba(124,58,237,0.5);color:#c4b5fd;font-size:.58rem;font-weight:700;letter-spacing:.06em;padding:.2rem .55rem;border-radius:100px;margin-top:.5rem;text-transform:uppercase;}
+.user-panel{display:flex;align-items:center;gap:.7rem;padding:.9rem 1.75rem;border-bottom:1px solid rgba(255,255,255,0.08);}
+.user-av{width:30px;height:30px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0;}
+.user-inf{flex:1;min-width:0;}
+.user-nm{font-size:.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-em{font-size:.62rem;color:rgba(255,255,255,0.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.so-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:.85rem;transition:color .2s;flex-shrink:0;}
+.so-btn:hover{color:var(--error);}
+.nav-section{padding:.9rem 1.75rem .3rem;font-size:.6rem;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.1em;}
+.nav-link{display:flex;align-items:center;gap:.65rem;padding:.65rem 1.75rem;cursor:pointer;font-size:.8rem;font-weight:500;color:rgba(255,255,255,0.5);border-left:3px solid transparent;transition:all .15s;user-select:none;}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.07);}
+.nav-link.active{color:#fff;border-left-color:#fff;background:rgba(255,255,255,.1);}
+.nav-link span{font-size:.9rem;width:16px;text-align:center;}
+.sidebar-foot{margin-top:auto;padding:1rem 1.75rem;border-top:1px solid rgba(255,255,255,0.08);}
+.back-link{display:flex;align-items:center;gap:.5rem;color:rgba(255,255,255,0.45);text-decoration:none;font-size:.75rem;font-weight:500;transition:color .2s;}
+.back-link:hover{color:#fff;}
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+.topbar{background:rgba(255,255,255,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;box-shadow:0 1px 12px rgba(0,0,0,0.04);}
+.topbar-left h1{font-size:1.1rem;font-weight:700;color:var(--primary);}
+.topbar-left p{font-size:.75rem;color:var(--muted);margin-top:.05rem;}
+.topbar-right{display:flex;align-items:center;gap:.75rem;}
+.apex-pill{font-size:.72rem;font-weight:700;color:var(--purple);background:rgba(124,58,237,.1);border-radius:100px;padding:.3rem .75rem;}
+.btn-purple{background:var(--purple);color:#fff;border:none;padding:.55rem 1.1rem;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.btn-purple:hover{background:#6d28d9;}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--body);padding:.45rem .9rem;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.content{padding:2rem;flex:1;}
+.section{display:none;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.sec-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.8rem;flex-wrap:wrap;gap:1rem;}
+.page-title{font-size:1.5rem;font-weight:800;color:var(--text);line-height:1;}
+.page-title span{color:var(--purple);}
+.page-sub{font-size:.78rem;color:var(--muted);margin-top:.3rem;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.kpi-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1.25rem;box-shadow:0 2px 10px rgba(0,0,0,0.04);}
+.kpi-label{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;}
+.kpi-value{font-family:'Lexend',sans-serif;font-size:1.8rem;font-weight:600;line-height:1;}
+.kpi-ch{display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:600;margin-top:.4rem;padding:.15rem .5rem;border-radius:100px;}
+.kpi-ch.up{color:var(--success);background:rgba(46,204,113,.1);}
+.kpi-ch.down{color:var(--error);background:rgba(231,76,60,.1);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+.chart-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.04);}
+.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem;}
+.chart-title{font-size:.9rem;font-weight:700;color:var(--text);}
+.chart-tag{font-size:.68rem;font-weight:600;color:var(--primary);background:rgba(0,45,114,.08);border-radius:100px;padding:.22rem .65rem;}
+.chart-tag.purple{color:var(--purple);background:rgba(124,58,237,.1);}
+.chart-tag.red{color:var(--error);background:rgba(231,76,60,.1);}
+.chart-wrap{position:relative;height:220px;}
+.chart-wrap.tall{height:280px;}
+.data-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.data-table th{background:var(--surface);padding:.7rem 1rem;font-weight:600;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;}
+.data-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border);color:var(--body);}
+.data-table tr:hover td{background:var(--surface);}
+.badge{display:inline-block;font-size:.68rem;font-weight:700;padding:.2rem .55rem;border-radius:100px;}
+.badge-green{background:rgba(46,204,113,.1);color:var(--success);}
+.badge-yellow{background:rgba(243,156,18,.1);color:var(--warning);}
+.badge-red{background:rgba(231,76,60,.1);color:var(--error);}
+.badge-purple{background:rgba(124,58,237,.1);color:var(--purple);}
+/* NLP */
+#nlpQ{flex:1;background:var(--bg);border:1.5px solid var(--border2);color:var(--text);padding:.8rem 1rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;border-radius:8px;outline:none;transition:border-color .2s;}
+#nlpQ:focus{border-color:var(--purple);}
+#nlpResult{display:none;background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.15);padding:1.2rem;border-radius:10px;margin-top:.75rem;}
+/* AUTH/UPGRADE OVERLAY */
+.auth-overlay{display:flex;position:fixed;inset:0;background:rgba(248,249,250,.95);backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+.auth-box{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:100%;max-width:440px;box-shadow:0 16px 48px rgba(0,0,0,0.12);text-align:center;}
+.auth-logo-text{font-weight:800;font-size:1.6rem;color:var(--primary);margin-bottom:.3rem;}
+.auth-logo-text span{color:var(--blue);}
+.auth-title{font-size:1.2rem;font-weight:700;color:var(--text);margin:.75rem 0 .25rem;}
+.auth-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;}
+.auth-msg{font-size:.82rem;padding:.7rem .9rem;border-radius:8px;margin-bottom:1rem;display:none;}
+.auth-msg.error.show{display:block;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25);color:var(--error);}
+.auth-msg.success.show{display:block;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);color:#1a8a4a;}
+.auth-field{margin-bottom:1rem;text-align:left;}
+.auth-field label{font-size:.78rem;font-weight:600;color:var(--body);display:block;margin-bottom:.4rem;}
+.auth-field input{width:100%;background:var(--bg);border:1.5px solid var(--border2);color:var(--text);padding:.8rem 1rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;border-radius:8px;outline:none;transition:border-color .2s;}
+.auth-field input:focus{border-color:var(--purple);}
+.auth-btn{width:100%;background:var(--purple);color:#fff;border:none;padding:.9rem;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s;margin-top:.5rem;}
+.auth-btn:hover{background:#6d28d9;}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;}
+.auth-switch{font-size:.82rem;color:var(--muted);margin-top:1rem;}
+.auth-switch a{color:var(--purple);cursor:pointer;font-weight:600;}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:8px;font-size:.82rem;font-weight:600;box-shadow:0 8px 24px rgba(0,45,114,.25);z-index:300;transform:translateY(80px);opacity:0;transition:all .3s ease;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.error{background:var(--error);}
+.toast.success{background:var(--success);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">VERTEX<span>AS</span></div>
+    <div class="logo-sub">Advanced AI Analytics</div>
+    <div class="apex-badge">◆ Apex Plan</div>
+  </div>
+  <div class="user-panel">
+    <div class="user-av" id="userAv">—</div>
+    <div class="user-inf">
+      <div class="user-nm" id="userName">Loading…</div>
+      <div class="user-em" id="userEmail">--</div>
+    </div>
+    <button class="so-btn" onclick="doSignOut()">⏻</button>
+  </div>
+  <div class="nav-section">Analytics</div>
+  <div class="nav-link active" data-section="overview"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M12 2C9.5 2 7 4 7 7c0 2 1 3.5 2.5 4.5L9 14h6l-.5-2.5C16 10.5 17 9 17 7c0-3-2.5-5-5-5z M9 14v1a3 3 0 006 0v-1"/></svg></span> AI Overview</div>
+  <div class="nav-link" data-section="forecast"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M3 18l4-8 4 4 4-6 4-4"/></svg></span> Revenue Forecast</div>
+  <div class="nav-link" data-section="anomaly"><span>⚠️</span> Anomaly Detection</div>
+  <div class="nav-link" data-section="nlp"><span><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M4 4h12a2 2 0 012 2v6a2 2 0 01-2 2H7l-4 4V6a2 2 0 012-2z"/></svg></span> NL Query</div>
+  <div class="nav-section">Models</div>
+  <div class="nav-link" data-section="models"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M12 8a4 4 0 11-8 0 4 4 0 018 0z M2 12h2 M18 12h2 M4.93 4.93l1.41 1.41 M15.66 15.66l1.41 1.41 M12 2v2 M12 18v2 M4.93 19.07l1.41-1.41 M15.66 6.34l1.41-1.41"/></svg></span> AI Models</div>
+  <div class="sidebar-foot">
+    <a href="#" class="back-link" onclick="goBackToDash(event)">← Back to Dashboard</a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 id="pageTitle">Advanced AI Analytics</h1>
+      <p id="pageSub">Full-suite AI · Predictive models · Anomaly detection</p>
+    </div>
+    <div class="topbar-right">
+      <span class="apex-pill">◆ Apex AI</span>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="section" id="sec-overview" style="display:block;animation:fadeUp .3s ease">
+      <div class="sec-header"><div><div class="page-title">AI <span>Overview</span></div><div class="page-sub">All models active · Real-time predictions</div></div><button class="btn-purple" onclick="buildOverview()">↻ Refresh</button></div>
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="grid-2">
+        <div class="chart-card" style="margin-bottom:0"><div class="chart-header"><span class="chart-title">Actual vs AI Prediction</span><span class="chart-tag purple">Multi-Model</span></div><div class="chart-wrap tall"><canvas id="cA"></canvas></div></div>
+        <div class="chart-card" style="margin-bottom:0"><div class="chart-header"><span class="chart-title">Model Confidence Score</span><span class="chart-tag purple">Per Month</span></div><div class="chart-wrap tall"><canvas id="cB"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-forecast">
+      <div class="sec-header"><div><div class="page-title">Revenue <span>Forecast</span></div><div class="page-sub">12-month AI projection with scenario modeling</div></div><button class="btn-purple" onclick="buildForecast()">↻ Recalculate</button></div>
+      <div class="chart-card"><div class="chart-header"><span class="chart-title">Historical + AI Forecast</span><span class="chart-tag purple">LSTM Model</span></div><div class="chart-wrap tall"><canvas id="cC"></canvas></div></div>
+      <div class="chart-card"><div class="chart-header"><span class="chart-title">Scenario Analysis</span><span class="chart-tag purple">Bull / Base / Bear</span></div><div class="chart-wrap"><canvas id="cD"></canvas></div></div>
+    </div>
+
+    <div class="section" id="sec-anomaly">
+      <div class="sec-header"><div><div class="page-title">Anomaly <span>Detection</span></div><div class="page-sub">Real-time AI outlier detection</div></div></div>
+      <div class="grid-2">
+        <div class="chart-card" style="margin-bottom:0"><div class="chart-header"><span class="chart-title">Revenue Anomalies</span><span class="chart-tag red">AI Flagged</span></div><div class="chart-wrap tall"><canvas id="cE"></canvas></div></div>
+        <div class="chart-card" style="margin-bottom:0"><div class="chart-header"><span class="chart-title">Detected Events</span><span class="chart-tag purple">AI Analysis</span></div><div id="anomalyList"></div></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-nlp">
+      <div class="sec-header"><div><div class="page-title">Natural Language <span>Query</span></div><div class="page-sub">Ask questions in plain English</div></div></div>
+      <div class="chart-card">
+        <div style="font-size:.72rem;font-weight:700;color:var(--purple);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.8rem">◆ Ask the AI anything</div>
+        <div style="display:flex;gap:.8rem;margin-bottom:.8rem">
+          <input id="nlpQ" placeholder="e.g. What is my revenue trend?" onkeydown="if(event.key==='Enter')runNLP()"/>
+          <button class="btn-purple" onclick="runNLP()">Ask AI</button>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+          <button class="btn-ghost" onclick="document.getElementById('nlpQ').value='revenue';runNLP()">revenue</button>
+          <button class="btn-ghost" onclick="document.getElementById('nlpQ').value='churn';runNLP()">churn</button>
+          <button class="btn-ghost" onclick="document.getElementById('nlpQ').value='growth';runNLP()">growth</button>
+          <button class="btn-ghost" onclick="document.getElementById('nlpQ').value='forecast';runNLP()">forecast</button>
+          <button class="btn-ghost" onclick="document.getElementById('nlpQ').value='anomaly';runNLP()">anomaly</button>
+        </div>
+        <div id="nlpResult"></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-models">
+      <div class="sec-header"><div><div class="page-title">AI <span>Models</span></div><div class="page-sub">Machine learning models powering your analytics</div></div></div>
+      <div class="chart-card"><div class="chart-header"><span class="chart-title">Active Models</span><span class="chart-tag purple">6 Running</span></div>
+        <table class="data-table"><thead><tr><th>Model</th><th>Type</th><th>Accuracy</th><th>Status</th><th>Last Trained</th></tr></thead><tbody id="modelTbody"></tbody></table>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- AUTH/UPGRADE OVERLAY -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+    <div class="auth-logo-text">VERTEX<span>AS</span></div>
+    <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Advanced AI Analytics</div>
+    <div id="authMsg" class="auth-msg"></div>
+    <div id="loginPanel">
+      <div class="auth-title">Sign In</div>
+      <div class="auth-sub">Access Advanced AI Analytics</div>
+      <div class="auth-field"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <button class="auth-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
+      <div class="auth-switch">No account? <a onclick="showRegister()">Create one</a></div>
+    </div>
+    <div id="registerPanel" style="display:none">
+      <div class="auth-title">Create Account</div>
+      <div class="auth-sub">Get started with full AI analytics</div>
+      <div class="auth-field"><label>Full Name</label><input type="text" id="regName" placeholder="Jane Smith" autocomplete="name"/></div>
+      <div class="auth-field"><label>Organization</label><input type="text" id="regOrg" placeholder="Your Company"/></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="regEmail" placeholder="your@company.com" autocomplete="email"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="regPass" placeholder="Min 6 characters"/></div>
+      <button class="auth-btn" id="registerBtn" onclick="doRegister()">Create Account</button>
+      <div class="auth-switch">Already have an account? <a onclick="showLogin()">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+var SB_URL='https://aailluuzuldrkxgyamob.supabase.co';
+var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhaWxsdXV6dWxkcmt4Z3lhbW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTg4MjYsImV4cCI6MjA4ODg5NDgyNn0.JfTV2YUOWBDKTILjGqZHufkVJgr6FBH5pv8etYJUNyY';
+var sb=supabase.createClient(SB_URL,SB_KEY);
+var currentUser=null;
+function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},3000);}
+sb.auth.getSession().then(async function(res){
+  var session=res.data.session;
+  if(!session){window.location.href='login.html';return;}
+  currentUser=session.user;
+  var meta=currentUser.user_metadata||{};
+  var name=meta.name||currentUser.email.split('@')[0];
+  document.getElementById('userName').textContent=name;
+  document.getElementById('userEmail').textContent=currentUser.email;
+  document.getElementById('userAv').textContent=name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  var plan=await getPlan();
+  if(plan==='starter'||plan==='growth'){showUpgradeWallAdv(plan);return;}
+  document.getElementById('authOverlay').style.display='none';
+  initApp();
+});
+function doSignOut(){sb.auth.signOut().then(function(){window.location.href='login.html';});}
+async function goBackToDash(e){if(e)e.preventDefault();var p=await getPlan();if(p==='apex')window.location.href='VERTEXAS-Apex-Dashboard.html';else if(p==='growth')window.location.href='VERTEXAS-Growth-Dashboard.html';else window.location.href='VERTEXAS-Basic-Dashboard.html';}
+async function getPlan(){try{var pr=await sb.from('profiles').select('organization_id').eq('id',currentUser.id).single();if(!pr.data?.organization_id)return 'starter';var org=await sb.from('organizations').select('plan').eq('id',pr.data.organization_id).single();return org.data?.plan||'starter';}catch(e){return 'starter';}}
+function showUpgradeWallAdv(currentPlan){var isGrowth=currentPlan==='growth';var msg=isGrowth?'Advanced AI Analytics is an Apex-exclusive feature. Upgrade to Apex ($199/mo) to unlock full AI forecasting and anomaly detection.':'Advanced AI Analytics requires the Apex plan ($199/mo). Your Starter plan includes basic dashboards only.';var overlay=document.getElementById('authOverlay');if(!overlay)return;overlay.innerHTML='<div style="width:100%;max-width:460px;background:#fff;border:1px solid #EEEEEE;border-radius:16px;padding:2.5rem;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.12)"><div style="font-weight:800;font-size:1.6rem;color:#002D72;margin-bottom:.25rem">VERTEXAS</div><div style="font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.5rem">Apex Plan Required</div><div style="margin-bottom:1rem;opacity:.6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="#C5CBD8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M12 2a5 5 0 015 5v3H7V7a5 5 0 015-5z"/><path stroke="#C5CBD8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M5 10h14a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1v-8a1 1 0 011-1z"/></svg></div><div style="font-size:1.2rem;font-weight:800;color:#1A1A1B;margin-bottom:.5rem">Advanced AI Locked</div><div style="font-size:.85rem;color:#4A4A4A;line-height:1.7;margin-bottom:1.5rem">'+msg+'</div>'+(isGrowth?'<div style="font-size:.78rem;color:#888;margin-bottom:1rem">You have Growth AI — go to <a href="VERTEXAS-AI-Analytics.html" style="color:#7C3AED;font-weight:600;text-decoration:none">AI Analytics</a> instead.</div>':'')+'<a href="VERTEXAS.html#pricing" style="display:block;background:#002D72;color:#fff;padding:.9rem;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none;margin-bottom:.75rem">View Plans →</a><a href="VERTEXAS-Basic-Dashboard.html" style="display:block;color:#888;font-size:.82rem;text-decoration:none">← Back to Dashboard</a></div>';overlay.style.display='flex';}
+var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var charts={};
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function dc(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+function cfg(cb){var c={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'rgba(74,74,74,0.7)',font:{family:'Lexend',size:10}}},tooltip:{backgroundColor:'#002D72',borderColor:'rgba(0,45,114,.2)',borderWidth:1,titleColor:'#fff',bodyColor:'rgba(255,255,255,.8)',cornerRadius:8}},scales:{x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{color:'#888',font:{family:'Lexend',size:10}}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{color:'#888',font:{family:'Lexend',size:10}}}}};if(cb)c.scales.y.ticks.callback=cb;return c;}
+function initApp(){renderKPIs();buildOverview();navSetup({overview:{t:'Advanced AI Analytics',s:'Full-suite AI predictions and anomaly detection'},forecast:{t:'Revenue Forecasting',s:'AI-powered 12-month projections with scenario modeling'},anomaly:{t:'Anomaly Detection',s:'Real-time AI outlier and anomaly detection'},nlp:{t:'Natural Language Query',s:'Ask questions in plain English'},models:{t:'AI Models',s:'Machine learning models powering your analytics'}});setInterval(function(){renderKPIs();},4000);}
+function onSection(sec){if(sec==='overview')buildOverview();if(sec==='forecast')buildForecast();if(sec==='anomaly')buildAnomaly();if(sec==='models')buildModels();}
+var kpis=[{lbl:'Prediction Accuracy',val:'94.2%',ch:'+1.8%',up:true},{lbl:'Anomalies Detected',val:'7',ch:'+3 today',up:false},{lbl:'Models Running',val:'12',ch:'All active',up:true},{lbl:'Forecast Horizon',val:'12mo',ch:'Updated',up:true}];
+function renderKPIs(){kpis[1].val=rand(5,12).toString();document.getElementById('kpiGrid').innerHTML=kpis.map(function(k){return '<div class="kpi-card"><div class="kpi-label">'+k.lbl+'</div><div class="kpi-value" style="color:var(--purple)">'+k.val+'</div><div class="kpi-ch '+(k.up?'up':'down')+'">'+(k.up?'▲':'▼')+' '+k.ch+'</div></div>';}).join('');}
+function buildOverview(){dc('cA');dc('cB');var hist=MONTHS.map(function(){return rand(80000,140000);});var pred=hist.map(function(v,i){return Math.round(v*(1+i*0.02)+rand(-5000,5000));});charts['cA']=new Chart(document.getElementById('cA').getContext('2d'),{type:'line',data:{labels:MONTHS,datasets:[{label:'Actual',data:hist,borderColor:'#002D72',backgroundColor:'rgba(0,45,114,.07)',fill:true,tension:.4,pointRadius:2},{label:'AI Prediction',data:pred,borderColor:'#7C3AED',fill:false,tension:.4,pointRadius:3,borderDash:[4,4]},{label:'Linear Trend',data:MONTHS.map(function(_,i){return 80000+i*5000;}),borderColor:'rgba(0,86,210,.4)',fill:false,tension:.2,pointRadius:0}]},options:cfg(function(v){return '$'+(v/1000).toFixed(0)+'K';})});var conf=MONTHS.map(function(){return rand(82,97);});charts['cB']=new Chart(document.getElementById('cB').getContext('2d'),{type:'bar',data:{labels:MONTHS,datasets:[{label:'Confidence %',data:conf,backgroundColor:conf.map(function(v){return v>=90?'rgba(46,204,113,.75)':v>=80?'rgba(243,156,18,.75)':'rgba(231,76,60,.75)';}),borderRadius:4}]},options:cfg(function(v){return v+'%';})});}
+function buildForecast(){dc('cC');dc('cD');var hist=MONTHS.map(function(){return rand(80000,140000);});var fwd=['Jan F','Feb F','Mar F','Apr F','May F','Jun F'];var base=fwd.map(function(){return rand(130000,180000);});charts['cC']=new Chart(document.getElementById('cC').getContext('2d'),{type:'line',data:{labels:MONTHS.concat(fwd),datasets:[{label:'Historical',data:hist.concat(new Array(6).fill(null)),borderColor:'#002D72',backgroundColor:'rgba(0,45,114,.07)',fill:true,tension:.4,pointRadius:2},{label:'AI Forecast',data:new Array(12).fill(null).concat(base),borderColor:'#7C3AED',backgroundColor:'rgba(124,58,237,.08)',fill:true,tension:.4,pointRadius:3,borderDash:[4,4]}]},options:cfg(function(v){return v?'$'+(v/1000).toFixed(0)+'K':null;})});var bull=base.map(function(v){return Math.round(v*1.15);});var bear=base.map(function(v){return Math.round(v*.85);});charts['cD']=new Chart(document.getElementById('cD').getContext('2d'),{type:'bar',data:{labels:fwd,datasets:[{label:'Bull Case',data:bull,backgroundColor:'rgba(46,204,113,.75)',borderRadius:3},{label:'Base Case',data:base,backgroundColor:'rgba(124,58,237,.75)',borderRadius:3},{label:'Bear Case',data:bear,backgroundColor:'rgba(231,76,60,.55)',borderRadius:3}]},options:cfg(function(v){return '$'+(v/1000).toFixed(0)+'K';})});}
+function buildAnomaly(){dc('cE');var data=MONTHS.map(function(){return rand(80000,140000);});data[3]=rand(175000,200000);data[7]=rand(40000,58000);var colors=data.map(function(v){return(v>165000||v<62000)?'rgba(231,76,60,.8)':'rgba(0,45,114,.6)';});charts['cE']=new Chart(document.getElementById('cE').getContext('2d'),{type:'bar',data:{labels:MONTHS,datasets:[{label:'Revenue',data:data,backgroundColor:colors,borderRadius:3},{label:'Moving Avg',type:'line',data:data.map(function(_,i){var s=data.slice(Math.max(0,i-2),i+1);return Math.round(s.reduce(function(a,b){return a+b;},0)/s.length);}),borderColor:'rgba(0,86,210,.8)',fill:false,tension:.4,pointRadius:0}]},options:cfg(function(v){return '$'+(v/1000).toFixed(0)+'K';})});var anomalies=[{sev:'high',type:'Revenue Spike',val:'$192K (+38% above avg)',time:'Apr 2026',action:'Investigate campaign attribution'},{sev:'critical',type:'Revenue Drop',val:'$52K (-43% below avg)',time:'Aug 2026',action:'Immediate review required'},{sev:'medium',type:'Conversion Anomaly',val:'8.4% (+4.2% above baseline)',time:'Mar 2026',action:'Replicate conditions'}];document.getElementById('anomalyList').innerHTML=anomalies.map(function(a){var bc=a.sev==='critical'?'var(--error)':a.sev==='high'?'var(--warning)':'var(--purple)';var sc=a.sev==='critical'?'badge-red':a.sev==='high'?'badge-yellow':'badge-purple';return '<div style="border-left:3px solid '+bc+';padding:1rem 1.2rem;margin-bottom:.6rem;background:var(--surface);border-radius:0 8px 8px 0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem"><span style="font-size:.85rem;font-weight:700;color:var(--text)">'+a.type+'</span><span class="badge '+sc+'">'+a.sev+'</span></div><div style="font-size:.75rem;color:var(--muted);margin-bottom:.25rem">'+a.val+' · '+a.time+'</div><div style="font-size:.72rem;color:var(--purple);font-weight:600">▶ '+a.action+'</div></div>';}).join('');}
+function buildModels(){var models=[{name:'Revenue Forecasting',type:'LSTM Neural Net',acc:'94.2%',status:'active',trained:'2 days ago'},{name:'Churn Prediction',type:'Random Forest',acc:'89.7%',status:'active',trained:'5 days ago'},{name:'Anomaly Detection',type:'Isolation Forest',acc:'96.1%',status:'active',trained:'1 day ago'},{name:'Lead Scoring',type:'Gradient Boosting',acc:'87.3%',status:'active',trained:'3 days ago'},{name:'Demand Forecast',type:'ARIMA + ML',acc:'91.5%',status:'training',trained:'In progress'},{name:'Sentiment Analysis',type:'BERT Fine-tuned',acc:'88.4%',status:'active',trained:'7 days ago'}];document.getElementById('modelTbody').innerHTML=models.map(function(m){var sc=m.status==='active'?'badge-green':'badge-yellow';var pct=parseFloat(m.acc);var bc=pct>=93?'var(--success)':pct>=88?'var(--warning)':'var(--error)';return '<tr><td style="font-weight:700;color:var(--text)">'+m.name+'</td><td style="font-size:.72rem;color:var(--muted)">'+m.type+'</td><td><div style="display:flex;align-items:center;gap:.6rem"><div style="flex:1;height:4px;background:var(--border);border-radius:100px;position:relative;width:80px"><div style="position:absolute;left:0;top:0;bottom:0;width:'+m.acc+';background:'+bc+';border-radius:100px"></div></div><span style="font-size:.72rem;color:'+bc+';font-weight:600">'+m.acc+'</span></div></td><td><span class="badge '+sc+'">'+m.status+'</span></td><td style="font-size:.72rem;color:var(--muted)">'+m.trained+'</td></tr>';}).join('');}
+async function runNLP(){var q=document.getElementById('nlpQ').value.trim();if(!q){showToast('Enter a question','error');return;}var el=document.getElementById('nlpResult');el.style.display='block';el.innerHTML='<span style="color:var(--purple);font-size:.78rem;display:flex;align-items:center;gap:.5rem"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--purple);animation:pulse 1s ease infinite"></span>AI thinking…</span>';var session=null;try{var res=await sb.auth.getSession();session=res.data.session;}catch(e){}if(!session){showToast('Please sign in to use AI','error');el.style.display='none';return;}var t0=Date.now();try{var resp=await fetch(SB_URL+'/functions/v1/ai-analytics',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({question:q})});var data=await resp.json();var elapsed=((Date.now()-t0)/1000).toFixed(1);if(!resp.ok){el.innerHTML='<div style="color:var(--error);font-size:.85rem">'+(data.error||'AI service error. Try again.')+'</div>';return;}el.innerHTML='<div style="font-size:.7rem;font-weight:700;color:var(--purple);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.6rem">◆ AI Response · '+data.model+'</div><div style="font-size:.9rem;color:var(--text);line-height:1.7">'+escapeHtml(data.answer)+'</div><div style="font-size:.68rem;color:var(--muted);margin-top:.7rem;display:flex;gap:1.2rem"><span>'+elapsed+'s</span>'+(data.tokens?'<span>'+data.tokens.input_tokens+' in / '+data.tokens.output_tokens+' out tokens</span>':'')+'</div>';}catch(err){el.innerHTML='<div style="color:var(--error);font-size:.85rem">Network error: '+escapeHtml(err.message)+'</div>';}}
+function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function navSetup(titles){document.querySelectorAll('.nav-link').forEach(function(el){el.addEventListener('click',function(){document.querySelectorAll('.nav-link').forEach(function(n){n.classList.remove('active');});el.classList.add('active');var sec=el.dataset.section;document.querySelectorAll('.section').forEach(function(s){s.style.display='none';});var t=document.getElementById('sec-'+sec);if(t){t.style.display='block';t.style.animation='fadeUp .3s ease';}var m=titles[sec];if(m){document.getElementById('pageTitle').textContent=m.t;document.getElementById('pageSub').textContent=m.s;}if(window.onSection)onSection(sec);});});}
+function showLogin(){document.getElementById('loginPanel').style.display='block';document.getElementById('registerPanel').style.display='none';clearMsg();}
+function showRegister(){document.getElementById('loginPanel').style.display='none';document.getElementById('registerPanel').style.display='block';clearMsg();}
+function clearMsg(){var el=document.getElementById('authMsg');el.className='auth-msg';el.textContent='';}
+function showAuthMsg(msg,type){var el=document.getElementById('authMsg');el.textContent=msg;el.className='auth-msg '+type+' show';}
+function doLogin(){var email=document.getElementById('loginEmail').value.trim();var pass=document.getElementById('loginPass').value;if(!email||!pass){showAuthMsg('Please fill in all fields.','error');return;}var btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Signing in…';clearMsg();sb.auth.signInWithPassword({email:email,password:pass}).then(function(res){btn.disabled=false;btn.textContent='Sign In';if(res.error){var m=res.error.message;if(m.indexOf('Invalid login')>=0)m='Incorrect email or password.';showAuthMsg(m,'error');}});}
+function doRegister(){var name=document.getElementById('regName').value.trim();var org=document.getElementById('regOrg').value.trim();var email=document.getElementById('regEmail').value.trim();var pass=document.getElementById('regPass').value;if(!name||!email||!pass){showAuthMsg('Fill all required fields.','error');return;}if(pass.length<6){showAuthMsg('Password min. 6 characters.','error');return;}var btn=document.getElementById('registerBtn');btn.disabled=true;btn.textContent='Creating…';clearMsg();sb.auth.signUp({email:email,password:pass,options:{data:{name:name,organization:org||''},emailRedirectTo:window.location.origin+window.location.pathname}}).then(function(res){btn.disabled=false;btn.textContent='Create Account';if(res.error)showAuthMsg(res.error.message,'error');else if(res.data&&res.data.user&&res.data.user.identities&&res.data.user.identities.length===0)showAuthMsg('Account exists. Please sign in.','error');else{showAuthMsg('Account created! Check email to confirm.','success');setTimeout(showLogin,2500);}});}
+</script>
+</body>
+</html>

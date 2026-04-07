@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome — VERTEXAS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #002D72; --blue: #0056D2; --bg: #ffffff;
+      --surface: #F8F9FA; --border: #EEEEEE; --border2: #E2E6EA;
+      --text: #1A1A1B; --body: #4A4A4A; --muted: #888;
+      --success: #2ECC71; --error: #E74C3C;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--surface); color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+    .page { width: 100%; max-width: 560px; }
+    .logo-wrap { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 2rem; }
+    .logo-mark { width: 34px; height: 34px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .logo-text { font-weight: 800; font-size: 1.15rem; color: var(--primary); }
+    .logo-text span { color: var(--blue); }
+    .logo-sub { font-size: 0.68rem; color: var(--muted); margin-top: 0.1rem; }
+
+    /* stepper */
+    .stepper { display: flex; align-items: center; margin-bottom: 2rem; }
+    .step-dot {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700; color: var(--muted);
+      transition: all 0.35s; flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .step-dot.active { border-color: var(--primary); color: #fff; background: var(--primary); }
+    .step-dot.done { border-color: var(--success); color: var(--success); }
+    .step-dot.done::after { content: '✓'; font-size: 0.75rem; }
+    .step-dot.done .dot-num { display: none; }
+    .step-line { flex: 1; height: 2px; background: var(--border); transition: background 0.35s; }
+    .step-line.done { background: var(--success); }
+    .progress-bar { height: 3px; background: var(--border); border-radius: 100px; margin-bottom: 2rem; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--blue)); border-radius: 100px; transition: width 0.5s ease; }
+
+    /* card */
+    .card { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; box-shadow: 0 4px 30px rgba(0,0,0,0.06); }
+    .step-panel { display: none; animation: fadeIn 0.3s ease; }
+    .step-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .step-label { font-size: 0.72rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+    .step-title { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 0.6rem; color: var(--text); }
+    .step-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.75; margin-bottom: 2rem; }
+
+    .verify-notice {
+      background: rgba(0,45,114,0.05); border: 1px solid rgba(0,45,114,0.12);
+      border-radius: 10px; padding: 1rem 1.2rem;
+      display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 2rem;
+    }
+    .verify-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+    .verify-text { font-size: 0.85rem; color: var(--body); line-height: 1.6; }
+    .verify-email { color: var(--primary); font-weight: 600; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--body); margin-bottom: 0.45rem; }
+    .form-input {
+      width: 100%; background: var(--bg); border: 1.5px solid var(--border2);
+      color: var(--text); padding: 0.82rem 1rem;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.92rem;
+      border-radius: 8px; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,86,210,0.1); }
+    .form-input::placeholder { color: #ccc; }
+    .form-input.error { border-color: var(--error); }
+    .form-hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; }
+
+    .industry-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1.25rem; }
+    .industry-option {
+      background: var(--surface); border: 1.5px solid var(--border);
+      color: var(--muted); padding: 0.75rem 0.5rem;
+      font-size: 0.8rem; text-align: center; cursor: pointer;
+      border-radius: 8px; transition: all 0.2s; user-select: none;
+    }
+    .industry-option:hover { border-color: var(--blue); color: var(--primary); background: rgba(0,45,114,0.04); }
+    .industry-option.selected { background: rgba(0,45,114,0.07); border-color: var(--primary); color: var(--primary); }
+    .industry-icon { font-size: 1.1rem; display: block; margin-bottom: 0.3rem; }
+
+    .size-options { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .size-option {
+      background: var(--surface); border: 1.5px solid var(--border);
+      color: var(--muted); padding: 0.5rem 1rem;
+      font-size: 0.8rem; font-weight: 500; cursor: pointer;
+      border-radius: 100px; transition: all 0.2s; user-select: none;
+    }
+    .size-option:hover { border-color: var(--blue); color: var(--primary); }
+    .size-option.selected { background: rgba(0,45,114,0.07); border-color: var(--primary); color: var(--primary); font-weight: 700; }
+
+    .btn-primary {
+      width: 100%; background: var(--primary); color: #fff;
+      border: none; padding: 1rem;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 0.92rem;
+      border-radius: 8px; cursor: pointer; margin-top: 0.5rem;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { background: var(--blue); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,86,210,0.25); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-secondary {
+      background: transparent; border: 1.5px solid var(--border2); color: var(--body);
+      padding: 0.75rem 1.5rem; font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 500;
+      border-radius: 8px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.5rem; }
+    .btn-row .btn-primary { flex: 1; margin-top: 0; }
+
+    .error-message {
+      background: rgba(231,76,60,0.07); border: 1.5px solid rgba(231,76,60,0.25);
+      color: var(--error); padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem; font-size: 0.85rem; border-radius: 8px; display: none;
+    }
+    .error-message.show { display: block; }
+    .loading { text-align: center; color: var(--blue); margin: 0.75rem 0; font-size: 0.85rem; font-weight: 500; display: none; }
+    .loading.show { display: block; }
+
+    /* success step */
+    .success-ring {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 2px solid var(--success);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 2rem;
+      animation: ringPulse 2s ease infinite;
+    }
+    @keyframes ringPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(46,204,113,0.3); } 50% { box-shadow: 0 0 0 14px rgba(46,204,113,0); } }
+    .success-check { font-size: 1.8rem; color: var(--success); }
+    .success-org-name { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin: 0.5rem 0 0.3rem; }
+    .feature-list { margin: 2rem 0; display: flex; flex-direction: column; gap: 0.75rem; }
+    .feature-item {
+      display: flex; align-items: center; gap: 0.85rem;
+      font-size: 0.875rem; color: var(--body);
+      opacity: 0; transform: translateX(-8px); transition: all 0.4s ease;
+    }
+    .feature-item.visible { opacity: 1; transform: translateX(0); }
+    .feature-tick {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(46,204,113,0.12); border: 1.5px solid rgba(46,204,113,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; color: var(--success); flex-shrink: 0;
+    }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="logo-wrap">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L16 14H2L9 2Z" fill="white" fill-opacity="0.9"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">VERTEX<span>AS</span></div>
+      <div class="logo-sub">Business Intelligence Platform</div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:33%"></div></div>
+
+  <div class="stepper">
+    <div class="step-dot active" id="dot1"><span class="dot-num">1</span></div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-dot" id="dot2"><span class="dot-num">2</span></div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-dot" id="dot3"><span class="dot-num">3</span></div>
+  </div>
+
+  <div class="card" id="mainCard">
+
+    <!-- STEP 1 -->
+    <div class="step-panel active" id="step1">
+      <div class="step-label">Step 01 — Account Verified</div>
+      <h1 class="step-title">Email confirmed.<br/>You're in.</h1>
+      <p class="step-desc">Your account is verified and ready. Let's set up your workspace so VERTEXAS knows who you're reporting for.</p>
+      <div class="verify-notice">
+        <div class="verify-icon">✦</div>
+        <div class="verify-text">Signed in as <span class="verify-email" id="userEmailDisplay">—</span><br/>Your account is active and secure.</div>
+      </div>
+      <div class="error-message" id="step1Error"></div>
+      <button class="btn-primary" onclick="goToStep2()">Set Up My Organization →</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-panel" id="step2">
+      <div class="step-label">Step 02 — Your Organization</div>
+      <h1 class="step-title">Who are you<br/>building for?</h1>
+      <p class="step-desc">This creates your workspace. All dashboards, data, and team members will live under this organization.</p>
+      <div class="error-message" id="step2Error"></div>
+      <div class="loading" id="step2Loading">Creating your organization…</div>
+      <form id="orgForm" onsubmit="submitOrg(event)">
+        <div class="form-group">
+          <label class="form-label">Organization Name</label>
+          <input type="text" class="form-input" id="orgName" required placeholder="Acme Corp" autocomplete="organization"/>
+          <div class="form-hint">This is how your workspace will appear to all team members.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Role</label>
+          <input type="text" class="form-input" id="userRole" placeholder="CEO, Head of Analytics, Founder…" autocomplete="organization-title"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Industry</label>
+          <div class="industry-grid" id="industryGrid">
+            <div class="industry-option" data-val="Technology" onclick="selectIndustry(this)"><span class="industry-icon">◆</span>Technology</div>
+            <div class="industry-option" data-val="Finance" onclick="selectIndustry(this)"><span class="industry-icon">◈</span>Finance</div>
+            <div class="industry-option" data-val="Healthcare" onclick="selectIndustry(this)"><span class="industry-icon">◎</span>Healthcare</div>
+            <div class="industry-option" data-val="Retail" onclick="selectIndustry(this)"><span class="industry-icon">□</span>Retail</div>
+            <div class="industry-option" data-val="Manufacturing" onclick="selectIndustry(this)"><span class="industry-icon">▣</span>Manufacturing</div>
+            <div class="industry-option" data-val="Other" onclick="selectIndustry(this)"><span class="industry-icon">···</span>Other</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Team Size</label>
+          <div class="size-options" id="sizeOptions">
+            <div class="size-option" data-val="1–10" onclick="selectSize(this)">1–10</div>
+            <div class="size-option" data-val="11–50" onclick="selectSize(this)">11–50</div>
+            <div class="size-option" data-val="51–200" onclick="selectSize(this)">51–200</div>
+            <div class="size-option" data-val="201–1000" onclick="selectSize(this)">201–1000</div>
+            <div class="size-option" data-val="1000+" onclick="selectSize(this)">1000+</div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn-secondary" onclick="goToStep1()">← Back</button>
+          <button type="submit" class="btn-primary" id="orgSubmitBtn">Create Organization →</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-panel" id="step3" style="text-align:center">
+      <div class="success-ring"><div class="success-check">✓</div></div>
+      <div class="step-label">Step 03 — You're Ready</div>
+      <h1 class="step-title">Workspace<br/>Created</h1>
+      <div class="success-org-name" id="confirmedOrgName">—</div>
+      <p class="step-desc" style="margin-bottom:0">Your organization is live. Your dashboard is waiting.</p>
+      <div class="feature-list" id="featureList">
+        <div class="feature-item" id="feat1"><div class="feature-tick">✓</div><span>Organization created & secured with RLS</span></div>
+        <div class="feature-item" id="feat2"><div class="feature-tick">✓</div><span>Profile linked to your workspace</span></div>
+        <div class="feature-item" id="feat3"><div class="feature-tick">✓</div><span>Dashboard ready for your first data</span></div>
+        <div class="feature-item" id="feat4"><div class="feature-tick">✓</div><span>AI analytics available on Growth & Apex plans</span></div>
+      </div>
+      <hr class="divider"/>
+      <button class="btn-primary" id="dashboardBtn" onclick="goToDashboard()">Open My Dashboard →</button>
+      <div style="margin-top:1rem;font-size:0.78rem;color:var(--muted)">Redirecting automatically in <span id="countdown">5</span>s</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+  const sb = createClient('https://aailluuzuldrkxgyamob.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhaWxsdXV6dWxkcmt4Z3lhbW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTg4MjYsImV4cCI6MjA4ODg5NDgyNn0.JfTV2YUOWBDKTILjGqZHufkVJgr6FBH5pv8etYJUNyY');
+  let currentUser=null, selectedIndustry='', selectedSize='', createdOrgId=null;
+  async function init() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { const hash=window.location.hash; if (hash&&hash.includes('access_token')) { const{data,error:exchErr}=await sb.auth.getUser(); if(exchErr||!data.user){window.location.href='login.html';return;} currentUser=data.user; } else {window.location.href='login.html';return;} } else { currentUser=session.user; }
+    const emailEl=document.getElementById('userEmailDisplay'); if(emailEl&&currentUser.email) emailEl.textContent=currentUser.email;
+    const{data:profile}=await sb.from('profiles').select('organization_id,onboarding_complete').eq('id',currentUser.id).single();
+    if(profile&&profile.onboarding_complete&&profile.organization_id){routeToDashboard(null);return;}
+  }
+  function goToStep1(){setStep(1);}
+  function goToStep2(){setStep(2);}
+  function setStep(n){
+    document.querySelectorAll('.step-panel').forEach((p,i)=>p.classList.toggle('active',i+1===n));
+    for(let i=1;i<=3;i++){const dot=document.getElementById('dot'+i);dot.classList.remove('active','done');if(i<n)dot.classList.add('done');else if(i===n)dot.classList.add('active');}
+    for(let i=1;i<=2;i++)document.getElementById('line'+i).classList.toggle('done',i<n);
+    document.getElementById('progressFill').style.width={1:33,2:66,3:100}[n]+'%';
+  }
+  function selectIndustry(el){document.querySelectorAll('.industry-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');selectedIndustry=el.dataset.val;}
+  function selectSize(el){document.querySelectorAll('.size-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');selectedSize=el.dataset.val;}
+  async function submitOrg(e){
+    e.preventDefault();
+    const orgName=document.getElementById('orgName').value.trim(), userRole=document.getElementById('userRole').value.trim();
+    const errEl=document.getElementById('step2Error'), ldEl=document.getElementById('step2Loading'), btn=document.getElementById('orgSubmitBtn');
+    errEl.classList.remove('show');
+    if(!orgName){errEl.textContent='Please enter your organization name.';errEl.classList.add('show');return;}
+    ldEl.classList.add('show'); btn.disabled=true;
+    try {
+      const chosenPlan=currentUser.user_metadata?.plan||'starter';
+      const{data:org,error:orgErr}=await sb.from('organizations').insert({name:orgName,industry:selectedIndustry||null,team_size:selectedSize||null,owner_id:currentUser.id,plan:chosenPlan,created_at:new Date().toISOString()}).select().single();
+      if(orgErr)throw orgErr; createdOrgId=org.id;
+      const{error:profileErr}=await sb.from('profiles').upsert({id:currentUser.id,email:currentUser.email,full_name:currentUser.user_metadata?.name||'',role:userRole||null,organization_id:org.id,onboarding_complete:true,updated_at:new Date().toISOString()});
+      if(profileErr)throw profileErr;
+      ldEl.classList.remove('show');
+      document.getElementById('confirmedOrgName').textContent=orgName;
+      setStep(3); animateFeatures(); startCountdown();
+    } catch(err){ldEl.classList.remove('show');btn.disabled=false;errEl.textContent=err.message||'Something went wrong. Please try again.';errEl.classList.add('show');}
+  }
+  function animateFeatures(){document.querySelectorAll('.feature-item').forEach((item,i)=>setTimeout(()=>item.classList.add('visible'),300+i*200));}
+  function startCountdown(){let secs=5;const el=document.getElementById('countdown');const iv=setInterval(()=>{secs--;if(el)el.textContent=secs;if(secs<=0){clearInterval(iv);goToDashboard();}},1000);}
+  function goToDashboard(){routeToDashboard(null);}
+  function routeToDashboard(plan){const p=plan||currentUser?.user_metadata?.plan||'starter';if(p==='apex'){window.location.href='VERTEXAS-Apex-Dashboard.html';return;}if(p==='growth'){window.location.href='VERTEXAS-Growth-Dashboard.html';return;}window.location.href='VERTEXAS-Basic-Dashboard.html';}
+  init();
+</script>
+</body>
+</html>

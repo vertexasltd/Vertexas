@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VERTEXAS — Automation Rules</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#002D72;--blue:#0056D2;--bg:#ffffff;--surface:#F8F9FA;--border:#EEEEEE;--border2:#E2E6EA;--text:#1A1A1B;--body:#4A4A4A;--muted:#888;--success:#2ECC71;--warning:#F39C12;--error:#E74C3C;--sidebar-w:240px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--surface);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+.shell{display:flex;min-height:100vh;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--primary);display:flex;flex-direction:column;z-index:50;overflow-y:auto;}
+.sidebar-logo{padding:1.5rem 1.75rem;border-bottom:1px solid rgba(255,255,255,0.1);}
+.logo-text{font-weight:800;font-size:1.2rem;color:#fff;letter-spacing:-0.01em;}
+.logo-text span{color:rgba(255,255,255,0.45);}
+.logo-sub{font-size:.62rem;color:rgba(255,255,255,0.4);margin-top:.2rem;text-transform:uppercase;letter-spacing:.08em;}
+.plan-badge-sb{display:inline-block;background:rgba(46,204,113,0.2);border:1px solid rgba(46,204,113,0.35);color:#6ee7a0;font-size:.58rem;font-weight:700;letter-spacing:.06em;padding:.2rem .55rem;border-radius:100px;margin-top:.5rem;text-transform:uppercase;}
+.user-panel{display:flex;align-items:center;gap:.7rem;padding:.9rem 1.75rem;border-bottom:1px solid rgba(255,255,255,0.08);}
+.user-av{width:30px;height:30px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0;}
+.user-inf{flex:1;min-width:0;}
+.user-nm{font-size:.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-em{font-size:.62rem;color:rgba(255,255,255,0.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.so-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:.85rem;transition:color .2s;flex-shrink:0;}
+.so-btn:hover{color:var(--error);}
+.slot-panel{padding:.9rem 1.75rem;border-bottom:1px solid rgba(255,255,255,0.08);}
+.slot-label{font-size:.7rem;color:rgba(255,255,255,0.5);display:flex;justify-content:space-between;margin-bottom:.5rem;}
+.slot-track{height:4px;background:rgba(255,255,255,0.1);border-radius:100px;}
+.slot-fill{height:100%;background:rgba(255,255,255,0.6);border-radius:100px;transition:width .5s ease;}
+.nav-section{padding:.9rem 1.75rem .3rem;font-size:.6rem;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.1em;}
+.nav-link{display:flex;align-items:center;gap:.65rem;padding:.65rem 1.75rem;cursor:pointer;font-size:.8rem;font-weight:500;color:rgba(255,255,255,0.5);border-left:3px solid transparent;transition:all .15s;user-select:none;}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.07);}
+.nav-link.active{color:#fff;border-left-color:#fff;background:rgba(255,255,255,.1);}
+.nav-link span{font-size:.9rem;width:16px;text-align:center;}
+.sidebar-foot{margin-top:auto;padding:1rem 1.75rem;border-top:1px solid rgba(255,255,255,0.08);}
+.back-link{display:flex;align-items:center;gap:.5rem;color:rgba(255,255,255,0.45);text-decoration:none;font-size:.75rem;font-weight:500;transition:color .2s;}
+.back-link:hover{color:#fff;}
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+.topbar{background:rgba(255,255,255,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;box-shadow:0 1px 12px rgba(0,0,0,0.04);}
+.topbar-left h1{font-size:1.1rem;font-weight:700;color:var(--primary);}
+.topbar-left p{font-size:.75rem;color:var(--muted);margin-top:.05rem;}
+.topbar-right{display:flex;align-items:center;gap:.75rem;}
+.btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--body);padding:.55rem 1.1rem;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+.btn-primary{background:var(--primary);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.btn-primary:hover{background:var(--blue);}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--body);padding:.6rem 1.2rem;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.content{padding:2rem;flex:1;}
+.section{display:none;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+.stat-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1.2rem;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.04);}
+.stat-value{font-family:'Lexend',sans-serif;font-size:2rem;font-weight:600;color:var(--primary);line-height:1;}
+.stat-label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:.3rem;}
+
+/* WORKFLOW CARDS */
+.wf-list{display:flex;flex-direction:column;gap:.75rem;}
+.wf-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem;cursor:pointer;transition:border-color .2s,box-shadow .2s;box-shadow:0 2px 10px rgba(0,0,0,0.04);}
+.wf-card:hover,.wf-card.selected{border-color:var(--primary);box-shadow:0 4px 16px rgba(0,45,114,.08);}
+.wf-card.active{border-left:3px solid var(--success);}
+.wf-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem;}
+.wf-left{flex:1;}
+.wf-name{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:.2rem;}
+.wf-meta{font-size:.75rem;color:var(--muted);}
+.wf-right{flex-shrink:0;margin-left:1rem;}
+.wf-footer{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;}
+.wf-stat{font-size:.72rem;color:var(--muted);}
+.wf-btn{font-family:'Plus Jakarta Sans',sans-serif;font-size:.68rem;font-weight:600;padding:.3rem .75rem;border-radius:100px;cursor:pointer;transition:all .2s;border:1.5px solid;}
+.wf-btn.green{color:var(--success);border-color:rgba(46,204,113,.35);background:rgba(46,204,113,.07);}
+.wf-btn.green:hover{background:rgba(46,204,113,.15);}
+.wf-btn.yellow{color:var(--warning);border-color:rgba(243,156,18,.35);background:rgba(243,156,18,.07);}
+.wf-btn.yellow:hover{background:rgba(243,156,18,.15);}
+.wf-btn.red{color:var(--error);border-color:rgba(231,76,60,.35);background:rgba(231,76,60,.07);}
+.wf-btn.red:hover{background:rgba(231,76,60,.15);}
+.wf-add{background:var(--bg);border:1.5px dashed var(--border2);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;}
+.wf-add:hover{border-color:var(--primary);background:rgba(0,45,114,.03);}
+
+/* DETAIL PANEL */
+.detail-panel{position:fixed;right:0;top:0;bottom:0;width:360px;background:var(--bg);border-left:1px solid var(--border);z-index:100;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;box-shadow:-4px 0 24px rgba(0,0,0,0.08);}
+.detail-panel.open{transform:translateX(0);}
+.detail-header{display:flex;justify-content:space-between;align-items:flex-start;padding:1.5rem;border-bottom:1px solid var(--border);}
+.detail-title{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:.4rem;}
+.detail-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:.25rem;transition:color .2s;}
+.detail-close:hover{color:var(--text);}
+.detail-body{flex:1;overflow-y:auto;padding:1.5rem;}
+.detail-desc{font-size:.85rem;color:var(--body);line-height:1.65;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
+.detail-row{display:flex;align-items:center;gap:.75rem;padding:.55rem 0;border-bottom:1px solid var(--border);}
+.detail-label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;width:90px;flex-shrink:0;}
+.detail-val{font-size:.82rem;color:var(--text);font-weight:500;}
+.detail-section-title{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:1.25rem 0 .75rem;}
+.detail-footer{padding:1.5rem;border-top:1px solid var(--border);display:flex;gap:.75rem;}
+
+/* BUILDER MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:2rem;width:100%;max-width:540px;box-shadow:0 16px 48px rgba(0,0,0,0.12);position:relative;}
+.modal-close-btn{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;transition:color .2s;}
+.modal-close-btn:hover{color:var(--text);}
+.modal h2{font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:1.5rem;}
+.field-group{margin-bottom:1.1rem;}
+.field-group label{font-size:.78rem;font-weight:600;color:var(--body);display:block;margin-bottom:.4rem;}
+.field-group input,.field-group select,.field-group textarea{width:100%;background:var(--bg);border:1.5px solid var(--border2);color:var(--text);padding:.78rem 1rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;border-radius:8px;outline:none;transition:border-color .2s;}
+.field-group input:focus,.field-group select:focus,.field-group textarea:focus{border-color:var(--blue);}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+
+/* TEMPLATES */
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.25rem;}
+.tpl-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,0.04);transition:border-color .2s,box-shadow .2s;}
+.tpl-card:hover{border-color:var(--primary);box-shadow:0 6px 20px rgba(0,45,114,.08);}
+.tpl-name{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:.25rem;}
+.tpl-detail{font-size:.72rem;color:var(--blue);font-weight:600;margin-bottom:.6rem;}
+.tpl-desc{font-size:.8rem;color:var(--body);line-height:1.65;}
+
+/* BADGES */
+.badge{display:inline-block;font-size:.68rem;font-weight:700;padding:.2rem .55rem;border-radius:100px;}
+.badge-green{background:rgba(46,204,113,.1);color:var(--success);}
+.badge-yellow{background:rgba(243,156,18,.1);color:var(--warning);}
+.badge-red{background:rgba(231,76,60,.1);color:var(--error);}
+.badge-muted{background:rgba(0,0,0,.06);color:var(--muted);}
+
+/* AUTH OVERLAY */
+.auth-overlay{display:flex;position:fixed;inset:0;background:rgba(248,249,250,.95);backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+.auth-box{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:100%;max-width:420px;box-shadow:0 16px 48px rgba(0,0,0,.12);text-align:center;}
+.auth-logo-text{font-weight:800;font-size:1.6rem;color:var(--primary);margin-bottom:.25rem;}
+.auth-logo-text span{color:var(--blue);}
+.auth-title{font-size:1.2rem;font-weight:700;color:var(--text);margin:.75rem 0 .25rem;}
+.auth-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem;}
+.auth-msg{font-size:.82rem;padding:.7rem .9rem;border-radius:8px;margin-bottom:1rem;display:none;}
+.auth-msg.error.show{display:block;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25);color:var(--error);}
+.auth-msg.success.show{display:block;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);color:#1a8a4a;}
+.auth-field{margin-bottom:1rem;text-align:left;}
+.auth-field label{font-size:.78rem;font-weight:600;color:var(--body);display:block;margin-bottom:.4rem;}
+.auth-field input{width:100%;background:var(--bg);border:1.5px solid var(--border2);color:var(--text);padding:.8rem 1rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;border-radius:8px;outline:none;transition:border-color .2s;}
+.auth-field input:focus{border-color:var(--blue);}
+.auth-btn{width:100%;background:var(--primary);color:#fff;border:none;padding:.9rem;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s;margin-top:.5rem;}
+.auth-btn:hover{background:var(--blue);}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;}
+.auth-switch{font-size:.82rem;color:var(--muted);margin-top:1rem;}
+.auth-switch a{color:var(--blue);cursor:pointer;font-weight:600;}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:8px;font-size:.82rem;font-weight:600;box-shadow:0 8px 24px rgba(0,45,114,.25);z-index:300;transform:translateY(80px);opacity:0;transition:all .3s ease;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.error{background:var(--error);}
+.toast.success{background:var(--success);}
+.log-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,0.04);}
+</style>
+</head>
+<body>
+
+<!-- AUTH OVERLAY -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+    <div class="auth-logo-text">VERTEX<span>AS</span></div>
+    <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Automation Rules — Growth Plan</div>
+    <div id="authMsg" class="auth-msg"></div>
+    <div id="loginPanel">
+      <div class="auth-title">Sign In</div>
+      <div class="auth-sub">Access your automation workflows</div>
+      <div class="auth-field"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <button class="auth-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
+      <div class="auth-switch">No account? <a onclick="showRegister()">Create one</a></div>
+    </div>
+    <div id="registerPanel" style="display:none">
+      <div class="auth-title">Create Account</div>
+      <div class="auth-sub">Growth Plan — 5 workflow slots</div>
+      <div class="auth-field"><label>Full Name</label><input type="text" id="regName" placeholder="Jane Smith" autocomplete="name"/></div>
+      <div class="auth-field"><label>Organization</label><input type="text" id="regOrg" placeholder="Your Company" autocomplete="organization"/></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="regEmail" placeholder="your@company.com" autocomplete="email"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="regPass" placeholder="Min. 6 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"/></div>
+      <button class="auth-btn" id="registerBtn" onclick="doRegister()">Create Account</button>
+      <div class="auth-switch">Have an account? <a onclick="showLogin()">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">VERTEX<span>AS</span></div>
+    <div class="logo-sub">Automation Rules</div>
+    <div class="plan-badge-sb">◆ Growth Plan</div>
+  </div>
+  <div class="user-panel">
+    <div class="user-av" id="userAv">—</div>
+    <div class="user-inf">
+      <div class="user-nm" id="userName">Loading…</div>
+      <div class="user-em" id="userEmail">--</div>
+    </div>
+    <button class="so-btn" onclick="doSignOut()">⏻</button>
+  </div>
+  <div class="slot-panel">
+    <div class="slot-label"><span>Workflow Slots</span><span><span id="slotUsed">0</span> / <span id="slotTotal">5</span></span></div>
+    <div class="slot-track"><div class="slot-fill" id="slotBar" style="width:0%"></div></div>
+  </div>
+  <div class="nav-section">Workflows</div>
+  <div class="nav-link active" data-section="workflows"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M12 8a4 4 0 11-8 0 4 4 0 018 0z M2 12h2 M18 12h2 M4.93 4.93l1.41 1.41 M15.66 15.66l1.41 1.41 M12 2v2 M12 18v2 M4.93 19.07l1.41-1.41 M15.66 6.34l1.41-1.41"/></svg></span> My Workflows</div>
+  <div class="nav-link" data-section="logs"><span><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M4 4a2 2 0 012-2h5l5 5v9a2 2 0 01-2 2H6a2 2 0 01-2-2V4z M9 2v5h5 M7 13h6 M7 10h4"/></svg></span> Run History</div>
+  <div class="nav-link" data-section="templates"><span><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M4 4a2 2 0 012-2h5l5 5v9a2 2 0 01-2 2H6a2 2 0 01-2-2V4z M9 2v5h5 M7 8h6 M7 11h6 M7 14h3"/></svg></span> Templates</div>
+  <div class="sidebar-foot">
+    <a href="#" class="back-link" onclick="goBackToDash(event)">← Back to Dashboard</a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 id="pageTitle">Automation Rules</h1>
+      <p id="pageSubtitle">5 workflow slots · Trigger-based automation · Supabase backend</p>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-outline" onclick="openBuilder()">+ New Workflow</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="section" id="sec-workflows" style="display:block;animation:fadeUp .3s ease">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value" id="statActive">0</div><div class="stat-label">Active</div></div>
+        <div class="stat-card"><div class="stat-value" id="statPaused" style="color:var(--warning)">0</div><div class="stat-label">Paused</div></div>
+        <div class="stat-card"><div class="stat-value" id="statDraft" style="color:var(--muted)">0</div><div class="stat-label">Draft</div></div>
+        <div class="stat-card"><div class="stat-value" id="statRuns" style="color:var(--blue)">0</div><div class="stat-label">Total Runs</div></div>
+      </div>
+      <div class="wf-list" id="workflowList"></div>
+    </div>
+
+    <div class="section" id="sec-logs">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div><div style="font-size:1.5rem;font-weight:800;color:var(--text)">Run <span style="color:var(--primary)">History</span></div><div style="font-size:.78rem;color:var(--muted);margin-top:.2rem">Complete execution log for all workflows</div></div>
+      </div>
+      <div class="log-card"><div id="allLogs"></div></div>
+    </div>
+
+    <div class="section" id="sec-templates">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div><div style="font-size:1.5rem;font-weight:800;color:var(--text)">Workflow <span style="color:var(--primary)">Templates</span></div><div style="font-size:.78rem;color:var(--muted);margin-top:.2rem">Pre-built workflows to get started quickly</div></div>
+      </div>
+      <div class="tpl-grid" id="templateGrid"></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-header">
+    <div>
+      <div class="detail-title" id="detailName">Workflow</div>
+      <span class="badge badge-green" id="detailStatus">active</span>
+    </div>
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="detail-body">
+    <div class="detail-desc" id="detailDesc"></div>
+    <div class="detail-row"><span class="detail-label">Trigger</span><span class="detail-val" id="detailTrigger"></span></div>
+    <div class="detail-row"><span class="detail-label">Action</span><span class="detail-val" id="detailAction"></span></div>
+    <div class="detail-row"><span class="detail-label">Source</span><span class="detail-val" id="detailSource"></span></div>
+    <div class="detail-row"><span class="detail-label">Target</span><span class="detail-val" id="detailTarget"></span></div>
+    <div class="detail-row"><span class="detail-label">Total Runs</span><span class="detail-val" id="detailRuns"></span></div>
+    <div class="detail-row"><span class="detail-label">Last Run</span><span class="detail-val" id="detailLastRun"></span></div>
+    <div class="detail-row"><span class="detail-label">Next Run</span><span class="detail-val" id="detailNextRun"></span></div>
+    <div class="detail-section-title">Recent Executions</div>
+    <div id="detailLogs"></div>
+  </div>
+  <div class="detail-footer">
+    <button class="btn-primary" onclick="runNow()" style="flex:1">▶ Run Now</button>
+    <button class="btn-ghost" id="detailToggleBtn" onclick="detailToggle()" style="flex:1">Pause</button>
+  </div>
+</div>
+
+<!-- BUILDER MODAL -->
+<div class="modal-overlay" id="builderModal">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeBuilder()">✕</button>
+    <h2>New Workflow</h2>
+    <div class="field-group"><label>Workflow Name</label><input type="text" id="bldName" placeholder="e.g. Lead Notification"/></div>
+    <div class="field-group"><label>Description</label><textarea id="bldDesc" rows="2" placeholder="What does this workflow do?" style="resize:vertical"></textarea></div>
+    <div class="field-grid">
+      <div class="field-group"><label>Trigger Type</label>
+        <select id="bldTrigger">
+          <option value="data_change">Data Change (Supabase)</option>
+          <option value="schedule">Schedule (Time-based)</option>
+          <option value="kpi_threshold">KPI Threshold Breach</option>
+          <option value="form_submit">Form Submitted</option>
+        </select>
+      </div>
+      <div class="field-group"><label>Action Type</label>
+        <select id="bldAction">
+          <option value="notify">Send Notification</option>
+          <option value="email">Send Email</option>
+          <option value="report">Generate Report</option>
+          <option value="webhook">POST Webhook</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-grid">
+      <div class="field-group"><label>Data Source</label><input type="text" id="bldSource" placeholder="e.g. Supabase, CRM"/></div>
+      <div class="field-group"><label>Target / Destination</label><input type="text" id="bldTarget" placeholder="e.g. Email, Slack"/></div>
+    </div>
+    <div style="display:flex;gap:.8rem;margin-top:.5rem">
+      <button class="btn-primary" onclick="saveWorkflow()" style="flex:1">Save Workflow</button>
+      <button class="btn-ghost" onclick="closeBuilder()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SB_URL='https://aailluuzuldrkxgyamob.supabase.co';
+var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhaWxsdXV6dWxkcmt4Z3lhbW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTg4MjYsImV4cCI6MjA4ODg5NDgyNn0.JfTV2YUOWBDKTILjGqZHufkVJgr6FBH5pv8etYJUNyY';
+var sb=supabase.createClient(SB_URL,SB_KEY);
+var currentUser=null,WORKFLOW_LIMIT=5,MAX_WORKFLOWS=5,workflows=[],runLogs=[],activeWorkflow=null;
+
+function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},3000);}
+
+sb.auth.getSession().then(async function(res){
+  var session=res.data.session;
+  if(!session){window.location.href='login.html';return;}
+  currentUser=session.user;
+  var meta=currentUser.user_metadata||{};
+  var name=meta.name||currentUser.email.split('@')[0];
+  document.getElementById('userName').textContent=name;
+  document.getElementById('userEmail').textContent=currentUser.email;
+  document.getElementById('userAv').textContent=name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  var planResult=await checkPlanAccessAuto();
+  if(!planResult.ok){showUpgradeWallAuto('Automation Rules require the Growth plan ($79/mo). Starter plan does not include workflow automation.');return;}
+  WORKFLOW_LIMIT=planResult.plan==='apex'?9999:5;
+  MAX_WORKFLOWS=WORKFLOW_LIMIT;
+  document.getElementById('authOverlay').style.display='none';
+  initApp();
+});
+function doSignOut(){sb.auth.signOut().then(function(){window.location.href='login.html';});}
+async function goBackToDash(e){if(e)e.preventDefault();var result=await checkPlanAccessAuto();var p=result.plan||'starter';if(p==='apex')window.location.href='VERTEXAS-Apex-Dashboard.html';else if(p==='growth')window.location.href='VERTEXAS-Growth-Dashboard.html';else window.location.href='VERTEXAS-Basic-Dashboard.html';}
+async function checkPlanAccessAuto(){try{var pr=await sb.from('profiles').select('organization_id').eq('id',currentUser.id).single();if(!pr.data?.organization_id)return{ok:false,plan:'starter'};var org=await sb.from('organizations').select('plan').eq('id',pr.data.organization_id).single();var plan=org.data?.plan||'starter';return{ok:['growth','apex'].includes(plan),plan};}catch(e){return{ok:false,plan:'starter'};}}
+function showUpgradeWallAuto(msg){var overlay=document.getElementById('authOverlay');if(overlay){overlay.innerHTML='<div style="width:100%;max-width:460px;background:#fff;border:1px solid #EEEEEE;border-radius:16px;padding:2.5rem;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.12)"><div style="font-weight:800;font-size:1.6rem;color:#002D72;margin-bottom:.25rem">VERTEXAS</div><div style="font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.5rem">Plan Upgrade Required</div><div style="margin-bottom:1rem;opacity:.6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="#C5CBD8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M11 2L5 11h6l-2 7 8-10h-6l2-6z"/></svg></div><div style="font-size:1.2rem;font-weight:800;color:#1A1A1B;margin-bottom:.5rem">Feature Locked</div><div style="font-size:.85rem;color:#4A4A4A;line-height:1.7;margin-bottom:1.5rem">'+msg+'</div><a href="VERTEXAS.html#pricing" style="display:block;background:#002D72;color:#fff;padding:.9rem;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none;margin-bottom:.75rem">View Plans →</a><a href="VERTEXAS-Basic-Dashboard.html" style="display:block;color:#888;font-size:.82rem;text-decoration:none">← Back to Dashboard</a></div>';overlay.style.display='flex';}}
+
+function showLogin(){document.getElementById('loginPanel').style.display='block';document.getElementById('registerPanel').style.display='none';clearMsg();}
+function showRegister(){document.getElementById('loginPanel').style.display='none';document.getElementById('registerPanel').style.display='block';clearMsg();}
+function clearMsg(){var el=document.getElementById('authMsg');el.className='auth-msg';el.textContent='';}
+function showAuthMsg(msg,type){var el=document.getElementById('authMsg');el.textContent=msg;el.className='auth-msg '+type+' show';}
+function doLogin(){var email=document.getElementById('loginEmail').value.trim(),pass=document.getElementById('loginPass').value;if(!email||!pass){showAuthMsg('Please fill in all fields.','error');return;}var btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Signing in…';clearMsg();sb.auth.signInWithPassword({email:email,password:pass}).then(function(res){btn.disabled=false;btn.textContent='Sign In';if(res.error){var m=res.error.message;if(m.indexOf('Invalid login')>=0)m='Incorrect email or password.';showAuthMsg(m,'error');}});}
+function doRegister(){var name=document.getElementById('regName').value.trim(),org=document.getElementById('regOrg').value.trim(),email=document.getElementById('regEmail').value.trim(),pass=document.getElementById('regPass').value;if(!name||!email||!pass){showAuthMsg('Please fill in all required fields.','error');return;}if(pass.length<6){showAuthMsg('Password must be at least 6 characters.','error');return;}var btn=document.getElementById('registerBtn');btn.disabled=true;btn.textContent='Creating…';clearMsg();sb.auth.signUp({email:email,password:pass,options:{data:{name:name,organization:org||''},emailRedirectTo:window.location.origin+window.location.pathname}}).then(function(res){btn.disabled=false;btn.textContent='Create Account';if(res.error){showAuthMsg(res.error.message,'error');}else if(res.data&&res.data.user&&res.data.user.identities&&res.data.user.identities.length===0){showAuthMsg('Account already exists. Please sign in.','error');}else{showAuthMsg('Account created! Check your email to confirm.','success');setTimeout(showLogin,2500);}});}
+
+function initApp(){
+  workflows=[{id:1,name:'Lead Notification',status:'active',trigger:'New CRM Lead',action:'Send Email',runs:142,lastRun:'2 min ago',nextRun:'On trigger',desc:'Sends a Slack notification and email when a new lead is added to the CRM.',triggerType:'data_change',actionType:'notify',source:'Salesforce',target:'Email + Slack'},{id:2,name:'Weekly KPI Report',status:'active',trigger:'Every Monday 9AM',action:'Generate Report',runs:24,lastRun:'6 days ago',nextRun:'Mon 9:00 AM',desc:'Auto-generates and emails the weekly KPI summary to all team members.',triggerType:'schedule',actionType:'report',source:'Supabase',target:'Email'},{id:3,name:'Revenue Alert',status:'active',trigger:'Revenue drops below $80K',action:'Notify Team',runs:3,lastRun:'5 days ago',nextRun:'On trigger',desc:'Fires an alert when monthly revenue drops below the threshold set in the KPI monitor.',triggerType:'kpi_threshold',actionType:'notify',source:'KPI Monitor',target:'Slack'},{id:4,name:'New User Onboarding',status:'paused',trigger:'New User Signup',action:'Send Welcome Email',runs:89,lastRun:'1 day ago',nextRun:'Paused',desc:'Sends a personalized welcome email sequence when a new user registers.',triggerType:'data_change',actionType:'email',source:'Supabase Auth',target:'Email'},{id:5,name:'Churn Risk Webhook',status:'draft',trigger:'Churn Risk Score > 70%',action:'POST Webhook',runs:0,lastRun:'Never',nextRun:'Draft',desc:'Sends a webhook to your CRM when AI detects a high churn risk score for an account.',triggerType:'kpi_threshold',actionType:'webhook',source:'AI Analytics',target:'CRM Webhook'}];
+  runLogs=[{wfId:1,time:'2 min ago',status:'success',msg:'Email sent to team@company.com'},{wfId:2,time:'6 days ago',status:'success',msg:'Report generated and sent to 8 recipients'},{wfId:1,time:'18 min ago',status:'success',msg:'Slack notification delivered'},{wfId:3,time:'5 days ago',status:'success',msg:'Alert sent: Revenue at $78,400'},{wfId:4,time:'1 day ago',status:'success',msg:'Welcome email sent to new user'},{wfId:1,time:'1h ago',status:'failed',msg:'Email delivery failed - invalid address'},{wfId:2,time:'13 days ago',status:'success',msg:'Report generated and sent to 8 recipients'},{wfId:4,time:'2 days ago',status:'success',msg:'Welcome email sent to new user'}];
+  renderWorkflows();renderStats();renderLogs();loadFromSupabase();
+}
+function loadFromSupabase(){sb.from('workflows').select('*').eq('user_id',currentUser.id).then(function(res){if(res.data&&res.data.length>0){workflows=res.data;renderWorkflows();renderStats();showToast('Workflows loaded','success');}}).catch(function(){});}
+function saveToSupabase(wf){var record={user_id:currentUser.id,name:wf.name,status:wf.status,trigger_type:wf.triggerType,action_type:wf.actionType,source:wf.source,target:wf.target,description:wf.desc,runs:wf.runs};if(wf.sb_id){sb.from('workflows').update(record).eq('id',wf.sb_id).then(function(){showToast('Saved','success');});}else{sb.from('workflows').insert([record]).select().then(function(res){if(res.data&&res.data[0])wf.sb_id=res.data[0].id;showToast('Workflow saved','success');});}}
+function renderStats(){var active=workflows.filter(function(w){return w.status==='active';}).length,paused=workflows.filter(function(w){return w.status==='paused';}).length,draft=workflows.filter(function(w){return w.status==='draft';}).length,totalRuns=workflows.reduce(function(s,w){return s+w.runs;},0);document.getElementById('statActive').textContent=active;document.getElementById('statPaused').textContent=paused;document.getElementById('statDraft').textContent=draft;document.getElementById('statRuns').textContent=totalRuns;var isUnlimited=MAX_WORKFLOWS>=9999;document.getElementById('slotUsed').textContent=workflows.length;document.getElementById('slotTotal').textContent=isUnlimited?'∞':MAX_WORKFLOWS;document.getElementById('slotBar').style.width=isUnlimited?((Math.min(workflows.length,30)/30)*100)+'%':((workflows.length/MAX_WORKFLOWS)*100)+'%';}
+function renderWorkflows(){var el=document.getElementById('workflowList');var statusBadge={active:'badge-green',paused:'badge-yellow',draft:'badge-muted'};el.innerHTML=workflows.map(function(w,i){return '<div class="wf-card '+(w.status==='active'?'active':'')+'" data-id="'+w.id+'" onclick="openDetail('+i+')"><div class="wf-header"><div class="wf-left"><div class="wf-name">'+w.name+'</div><div class="wf-meta">'+w.trigger+' → '+w.action+'</div></div><div class="wf-right"><span class="badge '+statusBadge[w.status]+'">'+w.status+'</span></div></div><div class="wf-footer"><span class="wf-stat">▶ '+w.runs+' runs</span><span class="wf-stat">Last: '+w.lastRun+'</span><span class="wf-stat">Next: '+w.nextRun+'</span><div style="margin-left:auto;display:flex;gap:.5rem">'+(w.status!=='active'?'<button class="wf-btn green" onclick="event.stopPropagation();toggleWF('+i+')">Enable</button>':'<button class="wf-btn yellow" onclick="event.stopPropagation();toggleWF('+i+')">Pause</button>')+'<button class="wf-btn red" onclick="event.stopPropagation();deleteWF('+i+')">Delete</button></div></div></div>';}).join('');var isUnlimited=MAX_WORKFLOWS>=9999;var remaining=isUnlimited?999:MAX_WORKFLOWS-workflows.length;if(remaining>0){el.innerHTML+='<div class="wf-add" onclick="openBuilder()"><span style="font-size:1.5rem;color:var(--primary)">+</span><div style="font-size:.85rem;font-weight:700;color:var(--text);margin-top:.4rem">New Workflow</div><div style="font-size:.72rem;color:var(--muted);margin-top:.15rem">'+(isUnlimited?'Unlimited workflows · Apex plan':remaining+' slot'+(remaining!==1?'s':'')+' remaining')+'</div></div>';}else{el.innerHTML+='<div class="wf-add" style="border-color:rgba(231,76,60,.3);cursor:not-allowed"><span style="font-size:1.5rem;color:var(--error)">◼</span><div style="font-size:.85rem;font-weight:700;color:var(--error);margin-top:.4rem">Slot Limit Reached (5/5)</div><div style="font-size:.72rem;color:var(--muted);margin-top:.15rem">Upgrade to Apex for unlimited workflows</div></div>';}}
+function openDetail(i){var w=workflows[i];activeWorkflow=i;document.getElementById('detailName').textContent=w.name;document.getElementById('detailStatus').textContent=w.status;document.getElementById('detailStatus').className='badge '+(w.status==='active'?'badge-green':w.status==='paused'?'badge-yellow':'badge-muted');document.getElementById('detailTrigger').textContent=w.trigger;document.getElementById('detailAction').textContent=w.action;document.getElementById('detailSource').textContent=w.source;document.getElementById('detailTarget').textContent=w.target;document.getElementById('detailRuns').textContent=w.runs+' total runs';document.getElementById('detailDesc').textContent=w.desc;document.getElementById('detailLastRun').textContent=w.lastRun;document.getElementById('detailNextRun').textContent=w.nextRun;document.getElementById('detailToggleBtn').textContent=w.status==='active'?'Pause Workflow':'Enable Workflow';document.getElementById('detailPanel').classList.add('open');document.querySelectorAll('.wf-card').forEach(function(c){c.classList.remove('selected');});var cards=document.querySelectorAll('.wf-card');if(cards[i])cards[i].classList.add('selected');renderDetailLogs(w.id);}
+function closeDetail(){document.getElementById('detailPanel').classList.remove('open');activeWorkflow=null;}
+function renderDetailLogs(wfId){var logs=runLogs.filter(function(l){return l.wfId===wfId;});var el=document.getElementById('detailLogs');el.innerHTML=logs.length===0?'<div style="color:var(--muted);font-size:.78rem;padding:.5rem">No runs yet.</div>':logs.map(function(l){return '<div style="display:flex;align-items:center;gap:.8rem;padding:.55rem 0;border-bottom:1px solid var(--border)"><span style="width:7px;height:7px;border-radius:50%;background:'+(l.status==='success'?'var(--success)':'var(--error)')+';flex-shrink:0"></span><span style="font-size:.75rem;color:var(--body);flex:1">'+l.msg+'</span><span style="font-size:.68rem;color:var(--muted)">'+l.time+'</span></div>';}).join('');}
+function detailToggle(){if(activeWorkflow!==null)toggleWF(activeWorkflow);}
+function runNow(){if(activeWorkflow===null)return;var w=workflows[activeWorkflow];w.runs++;w.lastRun='Just now';runLogs.unshift({wfId:w.id,time:'Just now',status:'success',msg:'Manual run triggered by '+currentUser.email});renderWorkflows();renderStats();renderDetailLogs(w.id);showToast('"'+w.name+'" executed','success');if(w.sb_id){sb.from('workflows').update({runs:w.runs}).eq('id',w.sb_id).then(function(){});}}
+function toggleWF(i){var w=workflows[i];w.status=w.status==='active'?'paused':'active';w.nextRun=w.status==='active'?'On trigger':'Paused';renderWorkflows();renderStats();if(activeWorkflow===i)openDetail(i);showToast('"'+w.name+'" '+(w.status==='active'?'enabled':'paused'));saveToSupabase(w);}
+function deleteWF(i){var w=workflows[i];if(!confirm('Delete "'+w.name+'"? This cannot be undone.'))return;if(w.sb_id){sb.from('workflows').delete().eq('id',w.sb_id).then(function(){});}workflows.splice(i,1);renderWorkflows();renderStats();closeDetail();showToast('"'+w.name+'" deleted');}
+function openBuilder(){if(workflows.length>=MAX_WORKFLOWS){showToast('Workflow limit reached. Upgrade to Apex for more.','error');return;}document.getElementById('bldName').value='';document.getElementById('bldDesc').value='';document.getElementById('bldTrigger').value='data_change';document.getElementById('bldAction').value='notify';document.getElementById('bldSource').value='';document.getElementById('bldTarget').value='';document.getElementById('builderModal').classList.add('open');}
+function closeBuilder(){document.getElementById('builderModal').classList.remove('open');}
+function saveWorkflow(){var name=document.getElementById('bldName').value.trim(),desc=document.getElementById('bldDesc').value.trim(),triggerType=document.getElementById('bldTrigger').value,actionType=document.getElementById('bldAction').value,source=document.getElementById('bldSource').value.trim()||'Supabase',target=document.getElementById('bldTarget').value.trim()||'Email';if(!name){showToast('Enter a workflow name','error');return;}var triggerLabels={data_change:'Data Change Detected',schedule:'Scheduled Time',kpi_threshold:'KPI Threshold Breach',form_submit:'Form Submitted'};var actionLabels={notify:'Send Notification',report:'Generate Report',email:'Send Email',webhook:'POST Webhook'};var newWF={id:Date.now(),name:name,status:'draft',trigger:triggerLabels[triggerType],action:actionLabels[actionType],runs:0,lastRun:'Never',nextRun:'Draft',desc:desc||'New workflow created via builder.',triggerType:triggerType,actionType:actionType,source:source,target:target};workflows.push(newWF);saveToSupabase(newWF);renderWorkflows();renderStats();closeBuilder();showToast('"'+name+'" created as draft');}
+function renderLogs(){var el=document.getElementById('allLogs');el.innerHTML=runLogs.map(function(l){var wf=workflows.find(function(w){return w.id===l.wfId;});return '<div style="display:flex;align-items:center;gap:.8rem;padding:.65rem 0;border-bottom:1px solid var(--border)"><span style="width:7px;height:7px;border-radius:50%;background:'+(l.status==='success'?'var(--success)':'var(--error)')+';flex-shrink:0"></span><span style="font-size:.82rem;font-weight:600;color:var(--text);min-width:160px">'+(wf?wf.name:'Unknown')+'</span><span style="font-size:.75rem;color:var(--body);flex:1">'+l.msg+'</span><span class="badge '+(l.status==='success'?'badge-green':'badge-red')+'" style="font-size:.62rem">'+l.status+'</span><span style="font-size:.68rem;color:var(--muted)">'+l.time+'</span></div>';}).join('');}
+document.querySelectorAll('.nav-link').forEach(function(el){el.addEventListener('click',function(){document.querySelectorAll('.nav-link').forEach(function(n){n.classList.remove('active');});el.classList.add('active');var sec=el.dataset.section;document.querySelectorAll('.section').forEach(function(s){s.style.display='none';});var target=document.getElementById('sec-'+sec);if(target){target.style.display='block';target.style.animation='fadeUp .3s ease';}var titles={workflows:{t:'Automation Rules',s:'5 workflow slots · Trigger-based automation'},logs:{t:'Run History',s:'Complete execution log for all workflows'},templates:{t:'Workflow Templates',s:'Pre-built workflows to get started quickly'}};var m=titles[sec];if(m){document.getElementById('pageTitle').textContent=m.t;document.getElementById('pageSubtitle').textContent=m.s;}if(sec==='templates')renderTemplates();});});
+var templates=[{name:'Lead to CRM',trigger:'Form Submitted',action:'Create CRM Record',desc:'When a lead form is submitted, automatically create a contact in your CRM and notify the sales team.',icon:'◆',color:'var(--blue)'},{name:'KPI Alert',trigger:'KPI Threshold',action:'Send Slack Alert',desc:'When any KPI drops below its target threshold, instantly notify the relevant team via Slack.',icon:'▲',color:'var(--error)'},{name:'Weekly Digest',trigger:'Every Monday 8AM',action:'Email Report',desc:'Automatically compile and email the weekly performance digest to all stakeholders.',icon:'○',color:'var(--warning)'},{name:'New User Welcome',trigger:'User Signup',action:'Email Sequence',desc:'Send a personalized welcome email when a new user registers via Supabase Auth.',icon:'■',color:'var(--success)'},{name:'Invoice Webhook',trigger:'Payment Received',action:'POST Webhook',desc:'Fire a webhook to your accounting system when Stripe processes a successful payment.',icon:'◇',color:'var(--primary)'}];
+function renderTemplates(){document.getElementById('templateGrid').innerHTML=templates.map(function(t,i){return '<div class="tpl-card"><div style="font-size:1.8rem;color:'+t.color+';margin-bottom:.8rem">'+t.icon+'</div><div class="tpl-name">'+t.name+'</div><div class="tpl-detail">'+t.trigger+' → '+t.action+'</div><div class="tpl-desc">'+t.desc+'</div><button class="btn-outline" style="width:100%;padding:.55rem;margin-top:1rem;font-size:.75rem" onclick="useTemplate('+i+')">Use Template</button></div>';}).join('');}
+function useTemplate(i){if(workflows.length>=MAX_WORKFLOWS){showToast('Workflow limit reached. Upgrade to Apex.','error');return;}var t=templates[i];document.getElementById('bldName').value=t.name;document.getElementById('bldDesc').value=t.desc;document.querySelectorAll('.nav-link').forEach(function(n){n.classList.remove('active');});document.querySelector('.nav-link[data-section="workflows"]').classList.add('active');document.querySelectorAll('.section').forEach(function(s){s.style.display='none';});document.getElementById('sec-workflows').style.display='block';openBuilder();}
+</script>
+</body>
+</html>

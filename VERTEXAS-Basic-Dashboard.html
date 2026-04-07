@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — VERTEXAS Starter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --primary:  #002D72;
+      --blue:     #0056D2;
+      --bg:       #ffffff;
+      --surface:  #F8F9FA;
+      --border:   #EEEEEE;
+      --border2:  #E2E6EA;
+      --text:     #1A1A1B;
+      --body:     #4A4A4A;
+      --muted:    #888;
+      --success:  #2ECC71;
+      --warning:  #F39C12;
+      --error:    #E74C3C;
+      --sidebar-w: 240px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--surface); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+    /* ── SHELL ── */
+    .shell { display: flex; min-height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--primary);
+      display: flex; flex-direction: column;
+      z-index: 50; overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 1.5rem 1.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .logo-text { font-weight: 800; font-size: 1.25rem; color: #fff; letter-spacing: -0.01em; }
+    .logo-text span { color: rgba(255,255,255,0.5); }
+    .logo-sub { font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .plan-pill {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.8);
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.25rem 0.6rem; border-radius: 100px;
+      margin-top: 0.6rem;
+    }
+    .user-panel {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 1rem 1.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .user-av {
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .user-inf { flex: 1; min-width: 0; }
+    .user-nm { font-size: 0.78rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-em { font-size: 0.65rem; color: rgba(255,255,255,0.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .so-btn { background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-size: 0.85rem; transition: color 0.2s; flex-shrink: 0; }
+    .so-btn:hover { color: var(--error); }
+    .org-panel { padding: 0.75rem 1.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .org-name { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .org-meta { font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-top: 0.15rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .usage-panel { padding: 0.9rem 1.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .usage-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .usage-bar-bg { height: 4px; background: rgba(255,255,255,0.1); border-radius: 100px; }
+    .usage-bar-fill { height: 100%; background: rgba(255,255,255,0.6); border-radius: 100px; transition: width 0.8s ease; }
+    .nav-section { padding: 1rem 1.75rem 0.4rem; font-size: 0.62rem; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.1em; }
+    .nav-link {
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 0.7rem 1.75rem;
+      cursor: pointer; font-size: 0.82rem; font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      transition: all 0.15s; text-decoration: none;
+      border-left: 3px solid transparent;
+    }
+    .nav-link:hover { color: #fff; background: rgba(255,255,255,0.07); }
+    .nav-link.active { color: #fff; border-left-color: #fff; background: rgba(255,255,255,0.1); }
+    .nav-link .ni { font-size: 0.95rem; width: 18px; text-align: center; }
+    .upgrade-panel {
+      margin: 1.5rem 1.75rem;
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 1.1rem;
+    }
+    .upgrade-panel h4 { font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+    .upgrade-panel p { font-size: 0.72rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 0.75rem; }
+    .upgrade-panel a {
+      display: block; text-align: center;
+      background: rgba(255,255,255,0.15);
+      border-radius: 6px;
+      color: #fff; font-size: 0.72rem; font-weight: 600;
+      padding: 0.5rem; text-decoration: none;
+      transition: background 0.2s;
+    }
+    .upgrade-panel a:hover { background: rgba(255,255,255,0.22); }
+    .sidebar-foot { margin-top: auto; padding: 1rem 1.75rem; border-top: 1px solid rgba(255,255,255,0.08); }
+    .signout-link {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: none; border: none;
+      color: rgba(255,255,255,0.4); cursor: pointer;
+      font-size: 0.75rem; font-weight: 500;
+      transition: color 0.15s; width: 100%;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .signout-link:hover { color: var(--error); }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background: rgba(255,255,255,0.96); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      box-shadow: 0 1px 12px rgba(0,0,0,0.04);
+    }
+    .topbar-left h1 { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+    .topbar-left h1 span { color: var(--blue); }
+    .topbar-left p { font-size: 0.75rem; color: var(--muted); margin-top: 0.05rem; }
+    .topbar-right { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
+    .topbar-time { font-family: 'Lexend', sans-serif; font-size: 0.75rem; color: var(--muted); }
+    .export-btn {
+      background: transparent; border: 1.5px solid var(--border2);
+      color: var(--body); padding: 0.5rem 1rem;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
+      border-radius: 6px; cursor: pointer; transition: all 0.2s;
+    }
+    .export-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .nav-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg); padding: 0 2rem; }
+    .tab {
+      font-size: 0.82rem; font-weight: 500; color: var(--muted);
+      padding: 0.9rem 1.1rem; cursor: pointer;
+      border-bottom: 2px solid transparent; transition: all 0.2s; user-select: none;
+    }
+    .tab:hover { color: var(--primary); }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+    .content { padding: 2rem; flex: 1; }
+    .section { display: none; }
+    .section.active { display: block; animation: fadeUp 0.3s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── METRICS ── */
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .metric-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.4rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s, transform 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .metric-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .metric-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--blue));
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+      border-radius: 0 0 10px 10px;
+    }
+    .metric-card:hover::after { transform: scaleX(1); }
+    .metric-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    .metric-value { font-family: 'Lexend', sans-serif; font-size: 2rem; font-weight: 600; color: var(--primary); line-height: 1; }
+    .metric-value.dim { color: var(--border2); }
+    .metric-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
+    .metric-change { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; font-weight: 600; margin-top: 0.4rem; padding: 0.15rem 0.5rem; border-radius: 100px; }
+    .metric-change.up { color: var(--success); background: rgba(46,204,113,0.1); }
+    .metric-change.down { color: var(--error); background: rgba(231,76,60,0.1); }
+    .metric-change.neu { color: var(--muted); background: rgba(0,0,0,0.05); }
+
+    /* ── CHART CARD ── */
+    .chart-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem; }
+    .chart-title { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+    .chart-tag {
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--primary); background: rgba(0,45,114,0.08);
+      border-radius: 100px; padding: 0.25rem 0.7rem;
+    }
+    .chart-tag.blue { color: var(--blue); background: rgba(0,86,210,0.08); }
+    .chart-tag.green { color: var(--success); background: rgba(46,204,113,0.1); }
+    .chart-wrap { position: relative; height: 220px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+
+    /* ── ACTIVITY FEED ── */
+    .activity-item {
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      padding: 0.75rem 0; border-bottom: 1px solid var(--border);
+    }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .activity-dot.active { background: var(--success); }
+    .activity-dot.info   { background: var(--blue); }
+    .activity-dot.muted  { background: var(--border2); }
+    .activity-title { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .activity-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.1rem; }
+    .activity-time { font-size: 0.68rem; color: var(--muted); margin-left: auto; flex-shrink: 0; font-family: 'Lexend', sans-serif; }
+
+    /* ── REPORTS ── */
+    .report-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .report-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem 1.2rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .report-item:hover { border-color: var(--primary); box-shadow: 0 2px 12px rgba(0,45,114,0.06); }
+    .report-left { display: flex; align-items: center; gap: 1rem; }
+    .report-icon {
+      width: 36px; height: 36px;
+      background: rgba(0,45,114,0.08); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .report-title { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+    .report-meta { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+    .report-size { font-size: 0.72rem; color: var(--muted); font-family: 'Lexend', sans-serif; }
+    .dl-btn {
+      background: var(--primary); color: #fff;
+      border: none; border-radius: 6px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.72rem; font-weight: 600;
+      padding: 0.45rem 1rem; cursor: pointer; transition: background 0.2s;
+    }
+    .dl-btn:hover { background: var(--blue); }
+
+    /* ── INTEGRATIONS ── */
+    .int-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .int-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.3rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .int-card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(0,86,210,0.08); }
+    .int-card.locked { opacity: 0.45; pointer-events: none; }
+    .int-name { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
+    .int-type { font-size: 0.68rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.7rem; }
+    .int-status { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; }
+    .int-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .int-dot.live { background: var(--success); animation: ldot 1.4s ease infinite; }
+    .int-dot.off  { background: var(--border2); }
+    @keyframes ldot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+    .int-connect-btn {
+      margin-top: 0.75rem; width: 100%;
+      background: transparent; border-radius: 6px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.72rem; font-weight: 600;
+      padding: 0.45rem; cursor: pointer; transition: all 0.2s;
+    }
+    .int-limit-note {
+      font-size: 0.78rem; color: var(--warning);
+      padding: 0.8rem 1rem; border: 1px solid rgba(243,156,18,0.3);
+      background: rgba(243,156,18,0.06); border-radius: 8px;
+    }
+
+    /* ── TEAM ── */
+    .team-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .seat-badge { font-size: 0.72rem; font-weight: 600; color: var(--primary); background: rgba(0,45,114,0.08); border-radius: 100px; padding: 0.3rem 0.75rem; }
+    .team-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .member-row {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.9rem 1.1rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; transition: border-color 0.2s;
+    }
+    .member-row:hover { border-color: var(--primary); }
+    .member-av {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(0,45,114,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 700; color: var(--primary); flex-shrink: 0;
+    }
+    .member-info { flex: 1; min-width: 0; }
+    .member-name { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+    .member-email { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+    .member-role {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 100px; flex-shrink: 0;
+    }
+    .member-role.owner { color: var(--primary); background: rgba(0,45,114,0.1); }
+    .member-role.member { color: var(--muted); background: rgba(0,0,0,0.05); }
+    .member-joined { font-size: 0.68rem; color: var(--muted); flex-shrink: 0; font-family: 'Lexend', sans-serif; }
+    .invite-btn {
+      width: 100%; margin-top: 0.75rem;
+      background: transparent; border: 1.5px dashed var(--border2);
+      color: var(--primary); border-radius: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem; font-weight: 600;
+      padding: 0.9rem; cursor: pointer; transition: all 0.2s;
+    }
+    .invite-btn:hover { border-color: var(--primary); background: rgba(0,45,114,0.04); }
+    .invite-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .seat-full-note {
+      font-size: 0.78rem; color: var(--warning);
+      padding: 0.6rem 0.8rem; border: 1px solid rgba(243,156,18,0.3);
+      background: rgba(243,156,18,0.05); border-radius: 6px; margin-top: 0.75rem; display: none;
+    }
+    .seat-full-note.show { display: block; }
+
+    /* ── MODAL ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: blur(4px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-overlay.show { display: flex; }
+    .modal-box { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; width: 100%; max-width: 420px; box-shadow: 0 16px 48px rgba(0,0,0,0.15); }
+    .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .modal-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+    .modal-label { font-size: 0.78rem; font-weight: 600; color: var(--body); display: block; margin-bottom: 0.45rem; }
+    .modal-input {
+      width: 100%; background: var(--bg); border: 1.5px solid var(--border2);
+      color: var(--text); padding: 0.82rem 1rem;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem;
+      border-radius: 8px; outline: none; transition: border-color 0.2s; margin-bottom: 1rem;
+    }
+    .modal-input:focus { border-color: var(--blue); }
+    .modal-btn-row { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+    .modal-btn { flex: 1; padding: 0.85rem; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .modal-btn.primary { background: var(--primary); color: #fff; border: none; }
+    .modal-btn.primary:hover { background: var(--blue); }
+    .modal-btn.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .modal-btn.cancel { background: transparent; border: 1.5px solid var(--border2); color: var(--body); }
+    .modal-btn.cancel:hover { border-color: var(--primary); color: var(--primary); }
+    .modal-msg { font-size: 0.78rem; margin-bottom: 0.75rem; padding: 0.65rem 0.85rem; border-radius: 8px; display: none; }
+    .modal-msg.err { background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.25); color: var(--error); }
+    .modal-msg.ok  { background: rgba(46,204,113,0.08); border: 1px solid rgba(46,204,113,0.25); color: #1a8a4a; }
+    .modal-msg.show { display: block; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--primary); color: #fff;
+      padding: 0.85rem 1.5rem; border-radius: 8px;
+      font-size: 0.82rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,45,114,0.25);
+      z-index: 300; transform: translateY(80px); opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { background: var(--error); box-shadow: 0 8px 24px rgba(231,76,60,0.25); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+    .empty-icon { font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.3; }
+    .empty-title { font-size: 0.9rem; font-weight: 600; color: var(--body); margin-bottom: 0.4rem; }
+    .empty-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── DATA TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .data-table th { background: var(--surface); padding: 0.7rem 1rem; font-weight: 600; text-align: left; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--body); }
+    .data-table tr:hover td { background: var(--surface); }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">VERTEX<span>AS</span></div>
+    <div class="logo-sub">Business Intelligence</div>
+    <div class="plan-pill">Starter Plan</div>
+  </div>
+
+  <div class="user-panel">
+    <div class="user-av" id="userAv">—</div>
+    <div class="user-inf">
+      <div class="user-nm" id="userName">Loading…</div>
+      <div class="user-em" id="userEmail">—</div>
+    </div>
+    <button class="so-btn" onclick="doSignOut()" title="Sign Out">⏻</button>
+  </div>
+
+  <div class="org-panel">
+    <div class="org-name" id="orgName">—</div>
+    <div class="org-meta" id="orgMeta">Loading workspace…</div>
+  </div>
+
+  <div class="usage-panel">
+    <div class="usage-label"><span>Team Seats</span><span id="seatLabel">0 / 3</span></div>
+    <div class="usage-bar-bg"><div class="usage-bar-fill" id="seatBar" style="width:0%"></div></div>
+  </div>
+
+  <div class="nav-section">Navigation</div>
+  <a class="nav-link active" onclick="showTab('overview')"><span class="ni"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:inline-block;vertical-align:middle" ><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2 2h6v6H2zM2 12h6v6H2zM12 2h6v6h-6zM12 12h6v6h-6z"/></svg></span> Overview</a>
+  <a class="nav-link" onclick="showTab('charts')"><span class="ni"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:inline-block;vertical-align:middle" ><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M3 17V9m4-4v12m4-7v7m4-10v10"/></svg></span> Charts</a>
+  <a class="nav-link" onclick="showTab('reports')"><span class="ni"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:inline-block;vertical-align:middle" ><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M4 4a2 2 0 012-2h5l5 5v9a2 2 0 01-2 2H6a2 2 0 01-2-2V4z M9 2v5h5 M7 13h6 M7 10h4"/></svg></span> Weekly Reports</a>
+  <a class="nav-link" onclick="showTab('integrations')"><span class="ni"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:inline-block;vertical-align:middle" ><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M13.5 6a3.5 3.5 0 010 7H11m-5 0a3.5 3.5 0 010-7H8.5 M8 10h4"/></svg></span> Integrations</a>
+  <a class="nav-link" onclick="showTab('team')"><span class="ni"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:inline-block;vertical-align:middle" ><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M13 7a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M5 17a5 5 0 0110 0"/></svg></span> Team Members</a>
+
+  <div class="upgrade-panel">
+    <h4>Unlock AI Analytics</h4>
+    <p>Upgrade to Growth ($79/mo) for AI insights, 10 users, advanced dashboards & automation.</p>
+    <a href="VERTEXAS.html#pricing">View Growth Plan →</a>
+  </div>
+
+  <div class="sidebar-foot">
+    <button class="signout-link" onclick="doSignOut()">⏻ &nbsp;Sign Out</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Starter <span>Dashboard</span></h1>
+      <p id="topbarSub">Starter plan · <span id="topbarOrg">Loading…</span></p>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-time" id="topbarTime">—</div>
+      <button class="export-btn" onclick="exportCSV()">↓ Export CSV</button>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <div class="tab active" id="tab-overview"     onclick="showTab('overview')">Overview</div>
+    <div class="tab"        id="tab-charts"       onclick="showTab('charts')">Charts</div>
+    <div class="tab"        id="tab-reports"      onclick="showTab('reports')">Weekly Reports</div>
+    <div class="tab"        id="tab-integrations" onclick="showTab('integrations')">Integrations</div>
+    <div class="tab"        id="tab-team"         onclick="showTab('team')">Team</div>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="sec-overview">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Revenue</div>
+          <div class="metric-value dim" id="metRevenue">—</div>
+          <div class="metric-sub">All time from DB</div>
+          <div class="metric-change neu" id="metRevChg">— No data yet</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Active Users</div>
+          <div class="metric-value dim" id="metUsers">—</div>
+          <div class="metric-sub">Platform accounts</div>
+          <div class="metric-change neu" id="metUsersChg">— No data yet</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Storage Used</div>
+          <div class="metric-value" id="metStorage">0 MB</div>
+          <div class="metric-sub">of 200 MB limit</div>
+          <div class="metric-change neu" id="metStorageChg">— Starter limit</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Data Records</div>
+          <div class="metric-value dim" id="metRecords">—</div>
+          <div class="metric-sub">In dashboard_data</div>
+          <div class="metric-change neu" id="metRecordsChg">— No data yet</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="chart-card" style="margin-bottom:0">
+          <div class="chart-header">
+            <span class="chart-title">Revenue Overview</span>
+            <span class="chart-tag">Last 6 months</span>
+          </div>
+          <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+        </div>
+        <div class="chart-card" style="margin-bottom:0">
+          <div class="chart-header">
+            <span class="chart-title">Recent Activity</span>
+            <span class="chart-tag blue">Live</span>
+          </div>
+          <div>
+            <div class="activity-item">
+              <span class="activity-dot active"></span>
+              <div class="activity-title">Workspace active</div>
+              <div class="activity-time">now</div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot info"></span>
+              <div><div class="activity-title">Auth enabled</div><div class="activity-sub">Supabase auth is live</div></div>
+              <div class="activity-time">today</div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot muted"></span>
+              <div><div class="activity-title">Add dashboard data</div><div class="activity-sub">Insert rows into dashboard_data</div></div>
+              <div class="activity-time">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">Users Over Time</span>
+          <span class="chart-tag green">Monthly</span>
+        </div>
+        <div class="chart-wrap"><canvas id="usersChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="section" id="sec-charts">
+      <div class="grid-2">
+        <div class="chart-card" style="margin-bottom:0">
+          <div class="chart-header"><span class="chart-title">Revenue Breakdown</span><span class="chart-tag">Monthly</span></div>
+          <div class="chart-wrap"><canvas id="revBarChart"></canvas></div>
+        </div>
+        <div class="chart-card" style="margin-bottom:0">
+          <div class="chart-header"><span class="chart-title">User Growth Rate</span><span class="chart-tag green">Trend</span></div>
+          <div class="chart-wrap"><canvas id="userLineChart"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><span class="chart-title">Data Points by Metric</span><span class="chart-tag blue">From dashboard_data</span></div>
+        <div id="metricsTableWrap">
+          <div class="empty-state"><div class="empty-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M3 18V10m4-6v14m4-9v9m4-12v12"/></svg></div><div class="empty-title">No data records yet</div><div class="empty-desc">Insert rows into your <code>dashboard_data</code> table to populate charts.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEKLY REPORTS -->
+    <div class="section" id="sec-reports">
+      <div class="chart-card" style="margin-bottom:1.5rem">
+        <div class="chart-header"><span class="chart-title">Weekly Reports</span><span class="chart-tag">Starter Plan · Auto-generated</span></div>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.7;">Weekly summaries are auto-generated every Monday. Download as CSV or view inline. Upgrade to Growth for PDF exports and scheduled email delivery.</p>
+        <div class="report-list" id="reportList"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><span class="chart-title">This Week's Summary</span><span class="chart-tag green">Current Period</span></div>
+        <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0;">
+          <div class="metric-card" style="background:var(--surface);">
+            <div class="metric-label">Avg Daily Records</div>
+            <div class="metric-value dim" id="wkRecords">—</div>
+            <div class="metric-sub">This week</div>
+          </div>
+          <div class="metric-card" style="background:var(--surface);">
+            <div class="metric-label">Team Logins</div>
+            <div class="metric-value dim" id="wkLogins">—</div>
+            <div class="metric-sub">This week</div>
+          </div>
+          <div class="metric-card" style="background:var(--surface);">
+            <div class="metric-label">Active Integrations</div>
+            <div class="metric-value" id="wkIntegrations">0</div>
+            <div class="metric-sub">of 2 integrations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTEGRATIONS -->
+    <div class="section" id="sec-integrations">
+      <div class="chart-card" style="margin-bottom:1.5rem">
+        <div class="chart-header"><span class="chart-title">Integrations</span><span class="chart-tag" id="intBadge">0 / 2 Active</span></div>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.7;">Your Starter plan includes <strong style="color:var(--text)">2 integrations</strong>. Upgrade to Growth for 10 integrations including AI-powered connectors.</p>
+        <div class="int-grid" id="intGrid"></div>
+        <div class="int-limit-note" id="intLimitNote" style="display:none">⚠ 2-integration limit reached on Starter plan. <a href="VERTEXAS.html#pricing" style="color:var(--primary);font-weight:600;text-decoration:none">Upgrade to Growth</a> for 10 integrations.</div>
+      </div>
+    </div>
+
+    <!-- TEAM -->
+    <div class="section" id="sec-team">
+      <div class="chart-card">
+        <div class="team-header-row">
+          <div>
+            <div class="chart-title">Team Members</div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:.25rem">Starter plan includes up to 3 users</div>
+          </div>
+          <div class="seat-badge" id="seatBadge">0 / 3 seats</div>
+        </div>
+        <div class="team-list" id="teamList">
+          <div class="empty-state"><div class="empty-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="#C5CBD8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M15 7a4 4 0 11-8 0 4 4 0 018 0z"/><path stroke="#C5CBD8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg></div><div class="empty-title">Loading team…</div></div>
+        </div>
+        <button class="invite-btn" id="inviteBtn" onclick="openInvite()">+ Invite Team Member</button>
+        <div class="seat-full-note" id="seatFullNote">Seat limit reached (3/3). <a href="VERTEXAS.html#pricing" style="color:var(--primary);font-weight:600;text-decoration:none">Upgrade to Growth</a> for up to 10 users.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div><!-- /shell -->
+
+<!-- INVITE MODAL -->
+<div class="modal-overlay" id="inviteModal">
+  <div class="modal-box">
+    <div class="modal-title">Invite Team Member</div>
+    <div class="modal-sub">They'll receive an email invitation to join your workspace. Starter plan: 3 seats max.</div>
+    <div class="modal-msg" id="inviteMsg"></div>
+    <label class="modal-label">Full Name</label>
+    <input class="modal-input" type="text" id="inviteName" placeholder="Jane Smith"/>
+    <label class="modal-label">Email Address</label>
+    <input class="modal-input" type="email" id="inviteEmail" placeholder="jane@company.com"/>
+    <div class="modal-btn-row">
+      <button class="modal-btn cancel" onclick="closeInvite()">Cancel</button>
+      <button class="modal-btn primary" id="inviteSendBtn" onclick="sendInvite()">Send Invite</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const { createClient } = supabase;
+const sb = createClient(
+  'https://aailluuzuldrkxgyamob.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhaWxsdXV6dWxkcmt4Z3lhbW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTg4MjYsImV4cCI6MjA4ODg5NDgyNn0.JfTV2YUOWBDKTILjGqZHufkVJgr6FBH5pv8etYJUNyY'
+);
+
+let currentUser = null, currentOrg = null, teamMembers = [];
+const SEAT_LIMIT = 3;
+const INT_LIMIT  = 2;
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('topbarTime').textContent =
+    now.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'}) + '  ' +
+    now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+updateClock(); setInterval(updateClock, 30000);
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = 'login.html'; return; }
+  currentUser = session.user;
+  const { data: profile } = await sb.from('profiles').select('full_name,role,organization_id,onboarding_complete').eq('id', currentUser.id).single();
+  if (!profile?.onboarding_complete || !profile?.organization_id) { window.location.href = 'VERTEXAS-Onboarding.html'; return; }
+  const { data: org } = await sb.from('organizations').select('id,name,plan,industry,team_size').eq('id', profile.organization_id).single();
+  currentOrg = org;
+  if (org.plan === 'growth') { window.location.href = 'VERTEXAS-Growth-Dashboard.html'; return; }
+  if (org.plan === 'apex')   { window.location.href = 'VERTEXAS-Apex-Dashboard.html';   return; }
+  populateIdentity(profile, org);
+  await loadDashboardData(org.id);
+  await loadTeam(org.id);
+  buildCharts();
+  buildReports();
+  buildIntegrations();
+})();
+
+function populateIdentity(profile, org) {
+  const name = profile.full_name || currentUser.user_metadata?.name || currentUser.email.split('@')[0];
+  const initials = name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('userAv').textContent    = initials;
+  document.getElementById('userName').textContent  = name;
+  document.getElementById('userEmail').textContent = currentUser.email;
+  document.getElementById('orgName').textContent   = org.name;
+  document.getElementById('orgMeta').textContent   = (org.industry || 'Organization') + ' · Starter';
+  document.getElementById('topbarOrg').textContent = org.name;
+}
+
+async function loadDashboardData(orgId) {
+  const { data: rows, error } = await sb.from('dashboard_data').select('metric_key,metric_value,recorded_at').eq('organization_id', orgId).order('recorded_at', { ascending: false }).limit(100);
+  if (error || !rows || rows.length === 0) { ['metRevenue','metUsers','metRecords'].forEach(id => document.getElementById(id).textContent = '—'); return; }
+  const total = (key) => rows.filter(r => r.metric_key === key).reduce((s,r) => s + Number(r.metric_value||0), 0);
+  const latest = (key) => rows.find(r => r.metric_key === key)?.metric_value ?? null;
+  const revenue = total('revenue'), users = latest('users');
+  if (revenue) { document.getElementById('metRevenue').textContent = '$' + revenue.toLocaleString(); document.getElementById('metRevenue').classList.remove('dim'); document.getElementById('metRevChg').textContent = '↑ From records'; document.getElementById('metRevChg').className = 'metric-change up'; }
+  if (users) { document.getElementById('metUsers').textContent = users; document.getElementById('metUsers').classList.remove('dim'); }
+  document.getElementById('metRecords').textContent = rows.length; document.getElementById('metRecords').classList.remove('dim');
+  document.getElementById('wkRecords').textContent  = Math.ceil(rows.length / 7);
+  const storageMB = (rows.length * 0.0005).toFixed(3);
+  document.getElementById('metStorage').textContent = storageMB + ' MB';
+  const keys = [...new Set(rows.map(r => r.metric_key))];
+  if (keys.length > 0) {
+    document.getElementById('metricsTableWrap').innerHTML = '<table class="data-table"><thead><tr><th>Metric</th><th>Latest Value</th><th>Count</th><th>Recorded</th></tr></thead><tbody>' +
+      keys.map(k => { const kRows = rows.filter(r => r.metric_key === k), lv = kRows[0]; return `<tr><td style="font-weight:700;color:var(--text)">${k}</td><td style="color:var(--primary);font-family:'Lexend',sans-serif;font-weight:600">${Number(lv.metric_value).toLocaleString()}</td><td>${kRows.length}</td><td style="color:var(--muted)">${lv.recorded_at}</td></tr>`; }).join('') + '</tbody></table>';
+  }
+}
+
+async function loadTeam(orgId) {
+  const { data: members } = await sb.from('profiles').select('id,full_name,email,role,updated_at').eq('organization_id', orgId);
+  teamMembers = members || []; renderTeam();
+}
+
+function renderTeam() {
+  const badge = document.getElementById('seatBadge'), used = teamMembers.length;
+  badge.textContent = `${used} / ${SEAT_LIMIT} seats`;
+  document.getElementById('seatLabel').textContent = `${used} / ${SEAT_LIMIT}`;
+  document.getElementById('seatBar').style.width = Math.min(100, (used / SEAT_LIMIT) * 100) + '%';
+  document.getElementById('wkLogins').textContent = used;
+  const inviteBtn = document.getElementById('inviteBtn'), seatNote = document.getElementById('seatFullNote');
+  if (used >= SEAT_LIMIT) { inviteBtn.disabled = true; seatNote.classList.add('show'); } else { inviteBtn.disabled = false; seatNote.classList.remove('show'); }
+  const list = document.getElementById('teamList');
+  if (teamMembers.length === 0) { list.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="#C5CBD8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M15 7a4 4 0 11-8 0 4 4 0 018 0z"/><path stroke="#C5CBD8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg></div><div class="empty-title">No team members yet</div><div class="empty-desc">Invite up to 3 people on the Starter plan.</div></div>'; return; }
+  list.innerHTML = teamMembers.map(m => {
+    const name = m.full_name || m.email?.split('@')[0] || 'User', initials = name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase(), isOwner = m.id === currentUser?.id, joined = m.updated_at ? new Date(m.updated_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+    return `<div class="member-row"><div class="member-av">${initials}</div><div class="member-info"><div class="member-name">${name}${isOwner ? ' <span style="font-size:.68rem;color:var(--muted)">(you)</span>' : ''}</div><div class="member-email">${m.email||'—'}</div></div><div class="member-role ${isOwner?'owner':'member'}">${isOwner?'Owner':m.role||'Member'}</div><div class="member-joined">${joined}</div></div>`;
+  }).join('');
+}
+
+function openInvite() { document.getElementById('inviteModal').classList.add('show'); }
+function closeInvite() { document.getElementById('inviteModal').classList.remove('show'); document.getElementById('inviteMsg').className='modal-msg'; document.getElementById('inviteName').value=''; document.getElementById('inviteEmail').value=''; document.getElementById('inviteSendBtn').disabled=false; }
+
+async function sendInvite() {
+  const name = document.getElementById('inviteName').value.trim(), email = document.getElementById('inviteEmail').value.trim(), msgEl = document.getElementById('inviteMsg'), btn = document.getElementById('inviteSendBtn');
+  msgEl.className = 'modal-msg';
+  if (!email) { msgEl.textContent = 'Please enter an email address.'; msgEl.classList.add('err','show'); return; }
+  if (teamMembers.length >= SEAT_LIMIT) { msgEl.textContent = `Seat limit reached (${SEAT_LIMIT}/${SEAT_LIMIT}).`; msgEl.classList.add('err','show'); return; }
+  btn.disabled = true; btn.textContent = 'Sending…';
+  const { error } = sb.auth.admin?.inviteUserByEmail ? await sb.auth.admin.inviteUserByEmail(email, { data: { full_name: name, organization_id: currentOrg.id } }) : { error: null };
+  btn.disabled = false; btn.textContent = 'Send Invite';
+  if (error) { msgEl.textContent = error.message || 'Could not send invite.'; msgEl.classList.add('err','show'); return; }
+  msgEl.textContent = `Invite sent to ${email}.`; msgEl.classList.add('ok','show');
+  setTimeout(() => { closeInvite(); showToast('Invite sent!'); }, 2000);
+}
+
+const CHART_OPTS = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false }, tooltip: { backgroundColor: '#002D72', titleColor: '#fff', bodyColor: 'rgba(255,255,255,0.8)', borderColor: 'rgba(0,45,114,0.2)', borderWidth: 1, cornerRadius: 8 } },
+  scales: {
+    x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#888', font: { family: 'Lexend', size: 10 } } },
+    y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#888', font: { family: 'Lexend', size: 10 } } }
+  }
+};
+const months = ['Aug','Sep','Oct','Nov','Dec','Jan'];
+
+function buildCharts() {
+  new Chart(document.getElementById('revenueChart'), { type:'line', data:{ labels:months, datasets:[{ data:[0,0,0,0,0,0], borderColor:'#002D72', backgroundColor:'rgba(0,45,114,0.06)', tension:0.4, pointBackgroundColor:'#002D72', pointRadius:4 }] }, options:{ ...CHART_OPTS, plugins:{ ...CHART_OPTS.plugins, tooltip:{ ...CHART_OPTS.plugins.tooltip, callbacks:{ label: ctx => ' $' + ctx.raw.toLocaleString() } } } } });
+  new Chart(document.getElementById('usersChart'),   { type:'line', data:{ labels:months, datasets:[{ data:[0,0,0,0,0,0], borderColor:'#2ECC71', backgroundColor:'rgba(46,204,113,0.06)', tension:0.4, pointBackgroundColor:'#2ECC71', pointRadius:4 }] }, options:CHART_OPTS });
+  new Chart(document.getElementById('revBarChart'),  { type:'bar',  data:{ labels:months, datasets:[{ data:[0,0,0,0,0,0], backgroundColor:'rgba(0,45,114,0.15)', borderColor:'#002D72', borderWidth:1.5, borderRadius:4 }] }, options:{ ...CHART_OPTS, plugins:{ ...CHART_OPTS.plugins, tooltip:{ ...CHART_OPTS.plugins.tooltip, callbacks:{ label: ctx => ' $' + ctx.raw.toLocaleString() } } } } });
+  new Chart(document.getElementById('userLineChart'),{ type:'line', data:{ labels:months, datasets:[{ data:[0,0,0,0,0,0], borderColor:'#0056D2', backgroundColor:'rgba(0,86,210,0.05)', tension:0.4, pointBackgroundColor:'#0056D2', pointRadius:4 }] }, options:CHART_OPTS });
+}
+
+function buildReports() {
+  const reports = [
+    { week:'Week 12 · Mar 17–23, 2026', size:'Pending', ready:false },
+    { week:'Week 11 · Mar 10–16, 2026', size:'2.1 KB',  ready:true  },
+    { week:'Week 10 · Mar 3–9, 2026',   size:'1.8 KB',  ready:true  },
+    { week:'Week 9  · Feb 24–Mar 2, 2026', size:'1.4 KB', ready:true },
+  ];
+  document.getElementById('reportList').innerHTML = reports.map((r,i) => `
+    <div class="report-item">
+      <div class="report-left">
+        <div class="report-icon">${r.ready ? '▣' : '◌'}</div>
+        <div><div class="report-title">${r.week}</div><div class="report-meta">${r.ready ? 'Ready to download' : 'Generating — available Monday'}</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <div class="report-size">${r.size}</div>
+        ${r.ready ? `<button class="dl-btn" onclick="downloadReport(${i})">↓ CSV</button>` : `<span style="font-size:.72rem;color:var(--muted)">Pending</span>`}
+      </div>
+    </div>`).join('');
+}
+
+async function downloadReport(idx) {
+  showToast('Preparing report…');
+  const today = new Date(), weekEnd = new Date(today); weekEnd.setDate(today.getDate() - (idx * 7));
+  const weekStart = new Date(weekEnd); weekStart.setDate(weekEnd.getDate() - 6);
+  const fmt = d => d.toISOString().slice(0,10);
+  let csvRows = 'week_number,metric_key,metric_value,recorded_at\n';
+  if (currentOrg) {
+    const { data: rows } = await sb.from('dashboard_data').select('metric_key,metric_value,recorded_at').eq('organization_id', currentOrg.id).gte('recorded_at', fmt(weekStart)).lte('recorded_at', fmt(weekEnd)).order('recorded_at', { ascending: true });
+    if (rows?.length > 0) rows.forEach(r => { csvRows += (12-idx) + ',' + r.metric_key + ',' + r.metric_value + ',' + r.recorded_at + '\n'; });
+    else csvRows += (12-idx) + ',no_data,0,' + fmt(weekStart) + '\n';
+  }
+  const blob = new Blob([csvRows], { type:'text/csv' }), url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = 'vertexas-report-week' + (12-idx) + '-' + fmt(weekStart) + '.csv'; a.click(); URL.revokeObjectURL(url);
+  showToast('Report downloaded');
+}
+
+const INT_OPTIONS = [
+  { name:'Google Sheets', type:'Spreadsheet', icon:'◼' },
+  { name:'Slack',         type:'Messaging',   icon:'◻' },
+  { name:'HubSpot',       type:'CRM',         icon:'◈' },
+  { name:'Zapier',        type:'Automation',  icon:'◆' },
+];
+let activeInts = [];
+
+function buildIntegrations() { renderIntegrations(); }
+
+function renderIntegrations() {
+  const grid = document.getElementById('intGrid'), badge = document.getElementById('intBadge');
+  badge.textContent = activeInts.length + ' / ' + INT_LIMIT + ' Active';
+  let html = INT_OPTIONS.slice(0, INT_LIMIT).map((opt, i) => {
+    const connected = activeInts.includes(i);
+    return `<div class="int-card">
+      <div style="font-size:1.5rem;margin-bottom:.6rem">${opt.icon}</div>
+      <div class="int-name">${opt.name}</div>
+      <div class="int-type">${opt.type}</div>
+      <div class="int-status"><span class="int-dot ${connected ? 'live' : 'off'}"></span><span style="color:${connected ? 'var(--success)' : 'var(--muted)'}">${connected ? 'Connected' : 'Not connected'}</span></div>
+      <button onclick="toggleInt(${i})" class="int-connect-btn" style="border:1.5px solid ${connected ? 'rgba(231,76,60,0.35)' : 'var(--border2)'};color:${connected ? 'var(--error)' : 'var(--primary)'};background:${connected ? 'rgba(231,76,60,0.05)' : 'transparent'}">${connected ? 'Disconnect' : 'Connect'}</button>
+    </div>`;
+  }).join('');
+  INT_OPTIONS.slice(INT_LIMIT).forEach(opt => { html += `<div class="int-card locked"><div style="font-size:1.5rem;margin-bottom:.6rem;opacity:.4">${opt.icon}</div><div class="int-name">${opt.name}</div><div class="int-type">${opt.type}</div><div class="int-status"><span class="int-dot off"></span><span style="color:var(--muted)">Locked · Growth plan</span></div></div>`; });
+  grid.innerHTML = html;
+  document.getElementById('intLimitNote').style.display = activeInts.length >= INT_LIMIT ? 'block' : 'none';
+}
+
+function toggleInt(i) {
+  if (activeInts.includes(i)) { activeInts = activeInts.filter(x => x !== i); showToast('Integration disconnected'); }
+  else { if (activeInts.length >= INT_LIMIT) { showToast('Limit reached — upgrade to Growth', true); return; } activeInts.push(i); showToast('Integration connected!'); }
+  document.getElementById('wkIntegrations').textContent = activeInts.length; renderIntegrations();
+}
+
+function exportCSV() {
+  showToast('Exporting…');
+  setTimeout(() => {
+    const csv = 'metric_key,metric_value,recorded_at\nrevenue,0,2026-03-24\nusers,0,2026-03-24\n', blob = new Blob([csv], { type:'text/csv' }), url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = 'vertexas-export-' + new Date().toISOString().slice(0,10) + '.csv'; a.click(); URL.revokeObjectURL(url);
+  }, 600);
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('sec-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => { if (l.getAttribute('onclick')?.includes(tab)) l.classList.add('active'); });
+}
+
+async function doSignOut() { await sb.auth.signOut(); window.location.href = 'login.html'; }
+
+function showToast(msg, err = false) {
+  const t = document.getElementById('toast'); t.textContent = msg;
+  t.className = 'toast show' + (err ? ' error' : '');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

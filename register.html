@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account — VERTEXAS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #002D72;
+      --blue:    #0056D2;
+      --bg:      #ffffff;
+      --surface: #F8F9FA;
+      --border:  #EEEEEE;
+      --border2: #E2E6EA;
+      --text:    #1A1A1B;
+      --body:    #4A4A4A;
+      --muted:   #888;
+      --success: #2ECC71;
+      --error:   #E74C3C;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--surface);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .container { width: 100%; max-width: 520px; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500;
+      margin-bottom: 2rem; transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    .logo-wrap { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2.5rem; }
+    .logo-text { font-weight: 800; font-size: 1.2rem; color: var(--primary); }
+    .logo-text span { color: var(--blue); }
+
+    .auth-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+    }
+    .auth-title {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem; font-weight: 600;
+      color: var(--text); letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+    .auth-subtitle { font-size: 0.9rem; color: var(--muted); margin-bottom: 2.5rem; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--body); margin-bottom: 0.45rem; }
+    .form-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border2);
+      color: var(--text);
+      padding: 0.85rem 1rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.92rem;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,86,210,0.1); }
+    .form-input::placeholder { color: #ccc; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .password-hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; }
+
+    .btn-primary {
+      width: 100%; background: var(--primary); color: #fff;
+      border: none; padding: 1rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600; font-size: 0.92rem;
+      border-radius: 8px; cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      margin-top: 0.5rem;
+    }
+    .btn-primary:hover { background: var(--blue); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,86,210,0.25); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .error-message {
+      background: rgba(231,76,60,0.08); border: 1.5px solid rgba(231,76,60,0.3);
+      color: var(--error); padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem; font-size: 0.85rem; border-radius: 8px; display: none;
+    }
+    .error-message.show { display: block; }
+    .success-message {
+      background: rgba(46,204,113,0.08); border: 1.5px solid rgba(46,204,113,0.3);
+      color: #1a8a4a; padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem; font-size: 0.85rem; border-radius: 8px; line-height: 1.6; display: none;
+    }
+    .success-message.show { display: block; }
+    .loading { text-align: center; color: var(--blue); margin: 0.75rem 0; font-size: 0.85rem; display: none; font-weight: 500; }
+    .loading.show { display: block; }
+
+    .auth-footer {
+      text-align: center; margin-top: 2rem;
+      padding-top: 1.5rem; border-top: 1px solid var(--border);
+      font-size: 0.9rem; color: var(--muted);
+    }
+    .auth-link { color: var(--blue); text-decoration: none; font-weight: 600; transition: opacity 0.15s; }
+    .auth-link:hover { opacity: 0.75; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a href="VERTEXAS.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back to Home
+  </a>
+
+  <div class="logo-wrap">
+    <div class="logo-text">VERTEX<span>AS</span></div>
+  </div>
+
+  <div class="auth-card">
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-subtitle">Start your journey with enterprise-grade business intelligence</p>
+
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
+    <div id="loading" class="loading">Creating your account…</div>
+
+    <form id="registerForm">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" id="name" required autocomplete="name" placeholder="Jane Smith"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" id="email" required autocomplete="email" placeholder="your@company.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Organization Name</label>
+        <input type="text" class="form-input" id="organization" required autocomplete="organization" placeholder="Your Company Inc."/>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="password" required autocomplete="new-password" placeholder="••••••••"/>
+          <div class="password-hint">Minimum 8 characters</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-input" id="confirmPassword" required autocomplete="new-password" placeholder="••••••••"/>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="registerBtn">Create Account →</button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="login.html" class="auth-link">Sign In</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://aailluuzuldrkxgyamob.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhaWxsdXV6dWxkcmt4Z3lhbW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTg4MjYsImV4cCI6MjA4ODg5NDgyNn0.JfTV2YUOWBDKTILjGqZHufkVJgr6FBH5pv8etYJUNyY'
+  );
+
+  // Read plan from URL param (?plan=starter|growth|apex), default to 'starter'
+  const selectedPlan = new URLSearchParams(window.location.search).get('plan') || 'starter';
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name  = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const org   = document.getElementById('organization').value.trim();
+    const pw    = document.getElementById('password').value;
+    const cpw   = document.getElementById('confirmPassword').value;
+    const errEl = document.getElementById('errorMessage');
+    const okEl  = document.getElementById('successMessage');
+    const ldEl  = document.getElementById('loading');
+    const btn   = document.getElementById('registerBtn');
+
+    errEl.classList.remove('show');
+    okEl.classList.remove('show');
+
+    if (pw !== cpw) {
+      errEl.textContent = 'Passwords do not match';
+      errEl.classList.add('show');
+      return;
+    }
+    if (pw.length < 8) {
+      errEl.textContent = 'Password must be at least 8 characters';
+      errEl.classList.add('show');
+      return;
+    }
+
+    ldEl.classList.add('show');
+    btn.disabled = true;
+
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password: pw,
+      options: {
+        data: { name, organization: org, plan: selectedPlan },
+        emailRedirectTo: window.location.origin +
+          window.location.pathname.replace(/[^/]*$/, '') +
+          'VERTEXAS-Onboarding.html'
+      }
+    });
+
+    ldEl.classList.remove('show');
+
+    if (error) {
+      errEl.textContent = error.message;
+      errEl.classList.add('show');
+      btn.disabled = false;
+      return;
+    }
+
+    okEl.innerHTML = `<strong>Account created!</strong><br/>
+      Check <strong>${email}</strong> to verify your account.<br/><br/>
+      Redirecting to login in 5 seconds…`;
+    okEl.classList.add('show');
+    setTimeout(() => { window.location.href = 'login.html'; }, 5000);
+  });
+</script>
+</body>
+</html>
